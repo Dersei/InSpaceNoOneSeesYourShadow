@@ -3,10 +3,15 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"  
+        xmlns:gl="clr-namespace:OpenTK;assembly=OpenTK.GLControl"
         xmlns:local="clr-namespace:InSpaceNoOneSeesYourShadow"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        
+        <WindowsFormsHost HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Initialized="WindowsFormsHost_Initialized">
+            <gl:GLControl x:Name="GLCanvas" Paint="GLControl_Paint" Load="GLControl_Load"></gl:GLControl>
+        </WindowsFormsHost>
+
     </Grid>
 </Window>
