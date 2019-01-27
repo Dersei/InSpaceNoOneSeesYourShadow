@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Timers;
 using System.Windows;
 using System.Windows.Threading;
+using InSpaceNoOneSeesYourShadow.Helpers;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
-using Utils;
 
-namespace InSpaceNoOneSeesYourShadow
+namespace InSpaceNoOneSeesYourShadow.GUI
 {
     /// <summary>
     /// Logika interakcji dla klasy MainWindow.xaml
@@ -44,8 +43,8 @@ namespace InSpaceNoOneSeesYourShadow
         private void GLControl_Load(object sender, EventArgs e)
         {
             // Load shaders from files
-            ShaderLoader.LoadShader("./Shaders/VertexShader.glsl", out var vShaderSource);
-            ShaderLoader.LoadShader("./Shaders/FragmentShader.glsl", out var fShaderSource);
+            ShaderLoader.LoadShaderFromFile("./_Resources/Shaders/VertexShader.glsl", out var vShaderSource);
+            ShaderLoader.LoadShaderFromFile("./_Resources/Shaders/FragmentShader.glsl", out var fShaderSource);
             if (vShaderSource == null || fShaderSource == null)
             {
                 Logger.Append("Failed load shaders from files");
@@ -53,7 +52,7 @@ namespace InSpaceNoOneSeesYourShadow
             }
 
             // Initialize the shaders
-            if (!ShaderLoader.InitShaders(vShaderSource, fShaderSource, out _program))
+            if (!ShaderLoader.CreateAndStartProgram(vShaderSource, fShaderSource, out _program))
             {
                 Logger.Append("Failed to initialize the shaders");
                 return;

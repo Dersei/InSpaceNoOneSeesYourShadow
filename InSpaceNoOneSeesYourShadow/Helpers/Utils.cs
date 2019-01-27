@@ -1,8 +1,9 @@
 ﻿using System;
-using OpenTK.Graphics.OpenGL;
+using System.Diagnostics;
 using System.IO;
+using OpenTK.Graphics.OpenGL;
 
-namespace Utils
+namespace InSpaceNoOneSeesYourShadow.Helpers
 {
     public class ShaderLoader
     {
@@ -15,7 +16,7 @@ namespace Utils
         ///<returns>
         ///return true, if the program object was created and successfully made current
         ///</returns>
-        public static bool InitShaders(string vShaderSource, string fShaderSource, out int program)
+        public static bool CreateAndStartProgram(string vShaderSource, string fShaderSource, out int program)
         {
             program = CreateProgram(vShaderSource, fShaderSource);
             if (program == 0)
@@ -35,17 +36,17 @@ namespace Utils
         ///<param name="errorOutputFileName">a file name for error messages</param>
         ///<param name="fileName">a file name to a shader</param>
         ///<param name="shaderSource">a shader source string</param>
-        public static void LoadShader(string shaderFileName, out string shaderSource)
+        public static void LoadShaderFromFile(string shaderFileName, out string shaderSource)
         {
-            if (File.Exists(Logger.logFileName))
+            if (File.Exists(Logger.LogFileName))
             {
                 // Clear File
-                File.WriteAllText(Logger.logFileName, "");
+                File.WriteAllText(Logger.LogFileName, "");
             }
 
             shaderSource = null;
 
-            using (StreamReader sr = new StreamReader(shaderFileName))
+            using (var sr = new StreamReader(shaderFileName))
             {
                 shaderSource = sr.ReadToEnd();
             }
@@ -54,15 +55,15 @@ namespace Utils
         private static int CreateProgram(string vShader, string fShader)
         {
             // Create shader object
-            int vertexShader = LoadShader(ShaderType.VertexShader, vShader);
-            int fragmentShader = LoadShader(ShaderType.FragmentShader, fShader);
+            var vertexShader = LoadShaderFromText(ShaderType.VertexShader, vShader);
+            var fragmentShader = LoadShaderFromText(ShaderType.FragmentShader, fShader);
             if (vertexShader == 0 || fragmentShader == 0)
             {
                 return 0;
             }
 
             // Create a program object
-            int program = GL.CreateProgram();
+            var program = GL.CreateProgram();
             if (program == 0)
             {
                 return 0;
@@ -76,11 +77,10 @@ namespace Utils
             GL.LinkProgram(program);
 
             // Check the result of linking
-            int status;
-            GL.GetProgram(program, GetProgramParameterName.LinkStatus, out status);
+            GL.GetProgram(program, GetProgramParameterName.LinkStatus, out var status);
             if (status == 0)
             {
-                string errorString = string.Format("Failed to link program: {0}" + Environment.NewLine, GL.GetProgramInfoLog(program));
+                var errorString = string.Format("Failed to link program: {0}" + Environment.NewLine, GL.GetProgramInfoLog(program));
                 Logger.Append(errorString);
                 GL.DeleteProgram(program);
                 GL.DeleteShader(vertexShader);
@@ -91,10 +91,10 @@ namespace Utils
             return program;
         }
 
-        private static int LoadShader(ShaderType shaderType, string shaderSource)
+        private static int LoadShaderFromText(ShaderType shaderType, string shaderSource)
         {
             // Create shader object
-            int shader = GL.CreateShader(shaderType);
+            var shader = GL.CreateShader(shaderType);
             if (shader == 0)
             {
                 Logger.Append("Unable to create shader");
@@ -108,11 +108,10 @@ namespace Utils
             GL.CompileShader(shader);
 
             // Check the result of compilation
-            int status;
-            GL.GetShader(shader, ShaderParameter.CompileStatus, out status);
+            GL.GetShader(shader, ShaderParameter.CompileStatus, out var status);
             if (status == 0)
             {
-                string errorString = string.Format("Failed to compile {0} shader: {1}", shaderType.ToString(), GL.GetShaderInfoLog(shader));
+                var errorString = $"Failed to compile {shaderType.ToString()} shader: {GL.GetShaderInfoLog(shader)}";
                 Logger.Append(errorString);
                 GL.DeleteShader(shader);
                 return 0;
@@ -124,7 +123,7 @@ namespace Utils
 
     public class Logger
     {
-        public static string logFileName = "info.txt";
+        public static string LogFileName = "info.txt";
 
         /// <summary>
         /// Write a message to a log file
@@ -132,7 +131,8 @@ namespace Utils
         /// <param name="message">a message that will append to a log file</param>
         public static void Append(string message)
         {
-            File.AppendAllText(logFileName, message + Environment.NewLine);
+            File.AppendAllText(LogFileName, message + Environment.NewLine);
+            Debug.WriteLine(message);
         }
     }
 }
