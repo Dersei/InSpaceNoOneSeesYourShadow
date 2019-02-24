@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Threading;
 using InSpaceNoOneSeesYourShadow.Helpers;
 using InSpaceNoOneSeesYourShadow.Helpers.Cameras;
@@ -12,6 +12,7 @@ using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
+using Color = System.Drawing.Color;
 
 namespace InSpaceNoOneSeesYourShadow.GUI
 {
@@ -399,10 +400,16 @@ namespace InSpaceNoOneSeesYourShadow.GUI
             _timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(1) };
             _timer.Tick += (s, args) =>
             {
-                GLCanvas.Refresh();
-                _timer.Start();
+                
+                //_timer.Start();
             };
-            _timer.Start();
+            CompositionTarget.Rendering += CompositionTarget_Rendering;
+            //_timer.Start();
+        }
+
+        private void CompositionTarget_Rendering(object sender, EventArgs e)
+        {
+            GLCanvas.Refresh();
         }
     }
 }
