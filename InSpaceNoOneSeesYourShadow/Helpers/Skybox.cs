@@ -87,14 +87,14 @@ namespace InSpaceNoOneSeesYourShadow.Helpers
             SkyboxShaders.SetInt("skybox", 0);
             List<string> faces = new List<string>()
             {
-                "Models/metal.png",
-                "Models/metal.png",
-                "Models/metal.png",
-                "Models/metal.png",
-                "Models/metal.png",
-                "Models/metal.png",
-                "Models/metal.png",
-                "Models/metal.png"
+                "_Resources/Textures/Skybox/metal.png",
+                "_Resources/Textures/Skybox/metal.png",
+                "_Resources/Textures/Skybox/metal.png",
+                "_Resources/Textures/Skybox/metal.png",
+                "_Resources/Textures/Skybox/metal.png",
+                "_Resources/Textures/Skybox/metal.png",
+                "_Resources/Textures/Skybox/metal.png",
+                "_Resources/Textures/Skybox/metal.png"
             };
 
             _cubeMapTexture = LoadCubemap(faces);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Windows;
 using System.Windows.Threading;
@@ -75,28 +76,15 @@ namespace InSpaceNoOneSeesYourShadow.GUI
 
             //GL.GenBuffers(1, out _iboElements);
             // Load shaders from file
-            _shaders.Add("light", new ShaderProgram("Shaders3D/Tutorial/vs_lit.glsl", "Shaders3D/Tutorial/fs_lit.glsl", true));
-            _shaders.Add("PBR", new ShaderProgram("Shaders3D/Tutorial/vs_lit.glsl", "Shaders3D/Tutorial/PBR.glsl", true));
+            _shaders.Add("light", new ShaderProgram("_Resources/Shaders/vs_lit.glsl", "_Resources/Shaders/fs_lit.glsl", true));
+            _shaders.Add("PBR", new ShaderProgram("_Resources/Shaders/vs_lit.glsl", "_Resources/Shaders/PBR.glsl", true));
             _activeShader = "PBR";
-            LoadMaterials("Models/opentk.mtl");
-            LoadMaterials("Models/tv.mtl");
-            LoadMaterials("Models/cat.mtl");
-            LoadMaterials("Models/Crate1.mtl");
-            LoadMaterials("Models/frisbee.mtl");
-            LoadMaterials("Models/ship2.mtl");
-            _textures.Add("sun.png", ImageLoader.LoadImage("Models/sun.png"));
-            _textures.Add("planet.png", ImageLoader.LoadImage("Models/planet.png"));
-            _textures.Add("earth.png", ImageLoader.LoadImage("Models/earth.png"));
-            _textures.Add("metal.png", ImageLoader.LoadImage("Models/metal.png"));
-            _textures.Add("cat_diff.png", ImageLoader.LoadImage("Models/cat_diff.png"));
-            _textures.Add("crate_1.jpg", ImageLoader.LoadImage("Models/crate_1.jpg"));
-            _textures.Add("frisbee.jpg", ImageLoader.LoadImage("Models/frisbee.jpg"));
-            _textures.Add("ship2_diffuse.bmp", ImageLoader.LoadImage("Models/ship2_diffuse.bmp"));
-            _textures.Add("leafs.png", ImageLoader.LoadImage("Textures/leafs.png"));
-            _textures.Add("galaxy.png", ImageLoader.LoadImage("Textures/galaxy.png"));
-            _textures.Add("comet.png", ImageLoader.LoadImage("Textures/comet.png"));
-            _textures.Add("ship2.png", ImageLoader.LoadImage("Textures/ship2.png"));
-            _textures.Add("dread_ship_t.png", ImageLoader.LoadImage("Textures/dread_ship_t.png"));
+            //LoadMaterials("Models/tv.mtl");
+            //LoadMaterials("Models/ship2.mtl");
+            _textures.Add("sun.png", ImageLoader.LoadImage("_Resources/Textures/sun.png"));
+            _textures.Add("ship2_diffuse.bmp", ImageLoader.LoadImage("_Resources/Textures/ship2_diffuse.bmp"));
+            _textures.Add("galaxy.png", ImageLoader.LoadImage("_Resources/Textures/galaxy.png"));
+            _textures.Add("dread_ship_t.png", ImageLoader.LoadImage("_Resources/Textures/dread_ship_t.png"));
             CreateScene();
             //CreateSkybox();
 
@@ -116,7 +104,7 @@ namespace InSpaceNoOneSeesYourShadow.GUI
         private void CreateScene()
         {
 
-            ObjVolume cubePlane = ObjVolume.LoadFromFile("Models/simple_cube.obj");
+            ObjVolume cubePlane = ObjVolume.LoadFromFile("_Resources/Models/simple_cube.obj");
             cubePlane.TextureId = _textures["galaxy.png"];
             cubePlane.Position += new Vector3(0f, 0f, 0f);
             cubePlane.Rotation = new Vector3(MathHelper.PiOver2, 0, 0f);
@@ -150,7 +138,7 @@ namespace InSpaceNoOneSeesYourShadow.GUI
             {
                 for (int i = 0; i < 6; i++)
                 {
-                    ObjVolume ship = ObjVolume.LoadFromFile("Models/ship_dread_t.obj");
+                    ObjVolume ship = ObjVolume.LoadFromFile("_Resources/Models/ship_dread_t.obj");
                     ship.TextureId = _textures["dread_ship_t.png"];
                     ship.Position += new Vector3(40f - 15 * i, 20f - 10 * j, 0f);
                     ship.PositionModifier = f => ship.Position + new Vector3((float)Math.Sin(_time) / 100f, -_time / 1000f, 0);
@@ -174,7 +162,7 @@ namespace InSpaceNoOneSeesYourShadow.GUI
             }
 
 
-            ObjVolume playerShip = ObjVolume.LoadFromFile("Models/ship2.obj");
+            ObjVolume playerShip = ObjVolume.LoadFromFile("_Resources/Models/ship2.obj");
             playerShip.Position += new Vector3(0f, -40f, -10f);
             playerShip.Rotation = new Vector3(-MathHelper.PiOver2, 0, 0);
             playerShip.Scale = new Vector3(0.05f, 0.05f, 0.05f);
@@ -420,14 +408,16 @@ namespace InSpaceNoOneSeesYourShadow.GUI
 
         private void GLControl_Load(object sender, EventArgs e)
         {
+            InitProgram();
+            GL.ClearColor(Color.White);
             _canDraw = true;
         }
 
-       
+
         private void WindowsFormsHost_Initialized(object sender, EventArgs e)
         {
             GLCanvas.MakeCurrent();
-            _timer = new DispatcherTimer { Interval = new TimeSpan(100) };
+            _timer = new DispatcherTimer { Interval = new TimeSpan(1) };
             _timer.Tick += (s, args) => GLCanvas.Refresh();
             _timer.Start();
         }
