@@ -89,6 +89,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Helpers\ImageLoader.cs" />
+    <Compile Include="Helpers\Skybox.cs" />
     <Compile Include="Objects3D\Shapes\Cone.cs" />
     <Compile Include="Objects3D\Shapes\Cube.cs" />
     <Compile Include="Objects3D\Shapes\Cylinder.cs" />
@@ -141,7 +143,25 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="_Resources\Models\cone.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="_Resources\Models\ship2.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="_Resources\Models\ship_dread_t.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="_Resources\Models\simple_cube.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="_Resources\Shaders\FragmentShader.glsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="_Resources\Shaders\Skybox\skybox.frag" />
+    <None Include="_Resources\Shaders\Skybox\skybox.vert" />
+    <None Include="_Resources\Shaders\Skybox\skybox_reflect.frag" />
+    <None Include="_Resources\Shaders\Skybox\skybox_reflect.vert">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="_Resources\Shaders\VertexShader.glsl">
@@ -153,7 +173,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Utils\" />
-    <Folder Include="_Resources\Models\" />
+    <Folder Include="_Resources\Textures\Skybox\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
