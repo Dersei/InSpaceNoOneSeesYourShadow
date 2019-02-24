@@ -370,30 +370,9 @@ namespace InSpaceNoOneSeesYourShadow.GUI
         {
             if (Keyboard.GetState().IsKeyDown(Key.Escape)) Close();
 
-            //if (Keyboard.GetState().IsKeyDown(Key.W)) _camera.Move(0f, 0.1f, 0f);
-
-            //if (Keyboard.GetState().IsKeyDown(Key.S)) _camera.Move(0f, -0.1f, 0f);
-
-            //if (Keyboard.GetState().IsKeyDown(Key.A)) _camera.Move(-0.1f, 0f, 0f);
-
-            //if (Keyboard.GetState().IsKeyDown(Key.D)) _camera.Move(0.1f, 0f, 0f);
-
-            //if (Keyboard.GetState().IsKeyDown(Key.Q)) _camera.Move(0f, 0f, 0.1f);
-
-            //if (Keyboard.GetState().IsKeyDown(Key.E)) _camera.Move(0f, 0f, -0.1f);
-
-            //if (Keyboard.GetState().IsKeyDown(Key.W)) _camera.Move(0f, 0.1f, 0f);
-
-            //if (Keyboard.GetState().IsKeyDown(Key.S)) _camera.Move(0f, -0.1f, 0f);
-
             if (Keyboard.GetState().IsKeyDown(Key.A)) _playerShip.Position += new Vector3(0.5f, 0, 0);
 
             if (Keyboard.GetState().IsKeyDown(Key.D)) _playerShip.Position += new Vector3(-0.5f, 0, 0);
-
-            //if (Keyboard.GetState().IsKeyDown(Key.Q)) _camera.Move(0f, 0f, 0.1f);
-
-            //if (Keyboard.GetState().IsKeyDown(Key.E)) _camera.Move(0f, 0f, -0.1f);
-
 
             if (Mouse.GetState().RightButton == ButtonState.Pressed)
             {
@@ -417,8 +396,12 @@ namespace InSpaceNoOneSeesYourShadow.GUI
         private void WindowsFormsHost_Initialized(object sender, EventArgs e)
         {
             GLCanvas.MakeCurrent();
-            _timer = new DispatcherTimer { Interval = new TimeSpan(1) };
-            _timer.Tick += (s, args) => GLCanvas.Refresh();
+            _timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(1) };
+            _timer.Tick += (s, args) =>
+            {
+                GLCanvas.Refresh();
+                _timer.Start();
+            };
             _timer.Start();
         }
     }
