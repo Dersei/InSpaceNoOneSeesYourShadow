@@ -10,7 +10,7 @@
         Title="MainWindow" Height="800" Width="800">
     <Grid>
         <WindowsFormsHost HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Initialized="WindowsFormsHost_Initialized">
-            <gl:GLControl x:Name="GLCanvas" Paint="GLControl_Paint" Load="GLControl_Load"></gl:GLControl>
+            <gl:GLControl x:Name="GLCanvas" Paint="GLControl_Paint" Load="GLControl_Load" PreviewKeyDown="GLCanvas_OnPreviewKeyDown"></gl:GLControl>
         </WindowsFormsHost>
 
     </Grid>

@@ -97,6 +97,11 @@ namespace InSpaceNoOneSeesYourShadow.Objects3D.Shapes
 
         }
 
+        public void CreateDictionary()
+        {
+            
+        }
+
         public void Draw()
         {
 

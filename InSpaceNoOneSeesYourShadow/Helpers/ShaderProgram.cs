@@ -231,6 +231,21 @@ namespace InSpaceNoOneSeesYourShadow.Helpers
             GenBuffers();
         }
 
+        public void SetUniform(string name, int value)
+        {
+            GL.Uniform1(GL.GetUniformLocation(ProgramId, name), value);
+        }
+
+        public void SetUniform(string name, float value)
+        {
+            GL.Uniform1(GL.GetUniformLocation(ProgramId, name), value);
+        }
+
+        public void SetUniform(string name, double value)
+        {
+            GL.Uniform1(GL.GetUniformLocation(ProgramId, name), value);
+        }
+
         public void SetFloat(string name, float value)
         {
             GL.Uniform1(GL.GetUniformLocation(ProgramId, name), value);

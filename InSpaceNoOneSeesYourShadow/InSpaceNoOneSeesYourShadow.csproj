@@ -91,12 +91,8 @@
     </ApplicationDefinition>
     <Compile Include="Helpers\ImageLoader.cs" />
     <Compile Include="Helpers\Skybox.cs" />
-    <Compile Include="Objects3D\Shapes\Cone.cs" />
-    <Compile Include="Objects3D\Shapes\Cube.cs" />
-    <Compile Include="Objects3D\Shapes\Cylinder.cs" />
     <Compile Include="Objects3D\Material.cs" />
     <Compile Include="Objects3D\Shapes\ObjVolume.cs" />
-    <Compile Include="Objects3D\Shapes\TexturedCube.cs" />
     <Compile Include="Objects3D\Volume.cs" />
     <Compile Include="Helpers\Cameras\BasicCamera.cs" />
     <Compile Include="Helpers\Cameras\GameCamera.cs" />
@@ -142,6 +138,9 @@
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="_Resources\Models\arrow.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="_Resources\Models\cone.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
