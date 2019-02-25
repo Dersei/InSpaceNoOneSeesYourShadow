@@ -199,9 +199,15 @@
     <None Include="_Resources\Shaders\simpleDepthShader2.glsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="_Resources\Shaders\Skybox\skybox.frag" />
-    <None Include="_Resources\Shaders\Skybox\skybox.vert" />
-    <None Include="_Resources\Shaders\Skybox\skybox_reflect.frag" />
+    <None Include="_Resources\Shaders\Skybox\skybox.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="_Resources\Shaders\Skybox\skybox.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="_Resources\Shaders\Skybox\skybox_reflect.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="_Resources\Shaders\Skybox\skybox_reflect.vert">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -139,7 +139,7 @@ namespace InSpaceNoOneSeesYourShadow.Helpers
             }
         }
 
-        public void EnableVertexAttribArrays()
+        public void EnableVertexAttributesArrays()
         {
             for (int i = 0; i < Attributes.Count; i++)
             {
@@ -147,7 +147,7 @@ namespace InSpaceNoOneSeesYourShadow.Helpers
             }
         }
 
-        public void DisableVertexAttribArrays()
+        public void DisableVertexAttributesArrays()
         {
             for (int i = 0; i < Attributes.Count; i++)
             {
@@ -177,12 +177,7 @@ namespace InSpaceNoOneSeesYourShadow.Helpers
 
         public uint GetBuffer(string name)
         {
-            if (Buffers.ContainsKey(name))
-            {
-                return Buffers[name];
-            }
-
-            return 0;
+            return Buffers.ContainsKey(name) ? Buffers[name] : 0;
         }
 
 
@@ -231,44 +226,83 @@ namespace InSpaceNoOneSeesYourShadow.Helpers
             GenBuffers();
         }
 
-        public void SetUniform(string name, int value)
+        public bool SetUniform(string name, int value)
         {
-            GL.Uniform1(GL.GetUniformLocation(ProgramId, name), value);
+            if (Uniforms.ContainsKey(name))
+            {
+                GL.Uniform1(Uniforms[name].Address, value);
+                return true;
+            }
+
+            return false;
         }
 
-        public void SetUniform(string name, float value)
+        public bool SetUniform(string name, float value)
         {
-            GL.Uniform1(GL.GetUniformLocation(ProgramId, name), value);
+            if (Uniforms.ContainsKey(name))
+            {
+                GL.Uniform1(Uniforms[name].Address, value);
+                return true;
+            }
+
+            return false;
         }
 
-        public void SetUniform(string name, double value)
+        public bool SetUniform(string name, double value)
         {
-            GL.Uniform1(GL.GetUniformLocation(ProgramId, name), value);
+            if (Uniforms.ContainsKey(name))
+            {
+                GL.Uniform1(Uniforms[name].Address, value);
+                return true;
+            }
+
+            return false;
         }
 
-        public void SetFloat(string name, float value)
+        public bool SetUniform(string name, Vector3 value)
         {
-            GL.Uniform1(GL.GetUniformLocation(ProgramId, name), value);
+            if (Uniforms.ContainsKey(name))
+            {
+                GL.Uniform3(Uniforms[name].Address, value);
+                return true;
+            }
+
+            return false;
         }
 
-        public void SetInt(string name, int value)
+        public bool SetUniform(string name, Matrix4 value, bool transpose = false)
         {
-            GL.Uniform1(GL.GetUniformLocation(ProgramId, name), value);
+            if (Uniforms.ContainsKey(name))
+            {
+                GL.UniformMatrix4(Uniforms[name].Address, transpose, ref value);
+                return true;
+            }
+
+            return false;
         }
 
-        public void SetVec3(string name, Vector3 value)
+        public bool SetUniform(string name, bool value)
         {
-            GL.Uniform3(GL.GetUniformLocation(ProgramId, name), value);
+            if (Uniforms.ContainsKey(name))
+            {
+                GL.Uniform1(Uniforms[name].Address, value ? 1 : 0);
+                return true;
+            }
+
+            return false;
         }
 
-        public void SetMat4(string name, Matrix4 value)
+        public bool SetAttribute(string name, Vector3[] value)
         {
-            GL.UniformMatrix4(GL.GetUniformLocation(ProgramId, name), false, ref value);
-        }
+            if (Attributes.ContainsKey(name))
+            {
+                GL.BindBuffer(BufferTarget.ArrayBuffer, GetBuffer(name));
+                GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(value.Length * Vector3.SizeInBytes), value, BufferUsageHint.StaticDraw);
+                GL.VertexAttribPointer(Attributes[name].Address, 3, VertexAttribPointerType.Float, true, 0, 0);
+                return true;
+            }
 
-        public void SetBool(string name, bool value)
-        {
-            GL.Uniform1(GL.GetUniformLocation(ProgramId, name), value ? 1 : 0);
+            return false;
         }
 
         public class UniformInfo

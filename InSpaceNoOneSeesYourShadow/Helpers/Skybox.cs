@@ -61,6 +61,7 @@ namespace InSpaceNoOneSeesYourShadow.Helpers
             };
 
             SkyboxShaders = new ShaderProgram("_Resources/Shaders/Skybox/skybox.vert", "_Resources/Shaders/Skybox/skybox.frag", true);
+            CreateSkybox();
         }
 
         public float[] SkyboxVertices { get; }
@@ -84,7 +85,7 @@ namespace InSpaceNoOneSeesYourShadow.Helpers
             GL.EnableVertexAttribArray(0);
             GL.VertexAttribPointer(SkyboxShaders.GetAttribute("vPosition"), 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
             GL.UseProgram(SkyboxShaders.ProgramId);
-            SkyboxShaders.SetInt("skybox", 0);
+            SkyboxShaders.SetUniform("skybox", 0);
             List<string> faces = new List<string>()
             {
                 "_Resources/Textures/Skybox/metal.png",
@@ -105,9 +106,9 @@ namespace InSpaceNoOneSeesYourShadow.Helpers
         {
             GL.DepthFunc(DepthFunction.Lequal);
             GL.UseProgram(SkyboxShaders.ProgramId);
-            SkyboxShaders.SetMat4("view", View);
+            SkyboxShaders.SetUniform("view", View);
             Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView((float)Math.PI * (45f / 180f), AspectRatio, 0.1f, 100.0f);
-            SkyboxShaders.SetMat4("projection", projection);
+            SkyboxShaders.SetUniform("projection", projection);
             GL.BindVertexArray(_skyboxVao);
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.TextureCubeMap, _cubeMapTexture);

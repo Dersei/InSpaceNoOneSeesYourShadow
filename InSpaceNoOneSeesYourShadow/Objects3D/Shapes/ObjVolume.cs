@@ -99,7 +99,24 @@ namespace InSpaceNoOneSeesYourShadow.Objects3D.Shapes
 
         public void CreateDictionary()
         {
-            
+            GL.GetProgram(VolumeShader.ProgramId, GetProgramParameterName.ActiveAttributes, out int length);
+            Console.WriteLine(length);
+            string names = "";
+            for (int i = 0; i < length; i++)
+            {
+                GL.GetActiveAttrib(VolumeShader.ProgramId, i, 20, out _, out _, out _, out var name);
+
+            }
+            Console.WriteLine(names);
+            GL.GetProgram(VolumeShader.ProgramId, GetProgramParameterName.ActiveUniforms, out int lengthU);
+            Console.WriteLine(lengthU);
+            string namesU = "";
+            for (int i = 0; i < lengthU; i++)
+            {
+                GL.GetActiveUniform(VolumeShader.ProgramId, i, 20, out _, out _, out _, out var name);
+                namesU += name + "\n";
+            }
+            Console.WriteLine(namesU);
         }
 
         public void Draw()

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -11,11 +9,12 @@ using InSpaceNoOneSeesYourShadow.Helpers.Cameras;
 using InSpaceNoOneSeesYourShadow.Objects3D;
 using InSpaceNoOneSeesYourShadow.Objects3D.Shapes;
 using OpenTK;
-using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
-using ButtonState = OpenTK.Input.ButtonState;
 using Color = System.Drawing.Color;
+using ButtonState = OpenTK.Input.ButtonState;
+using OpenTK.Graphics;
+using System.Windows;
 
 namespace InSpaceNoOneSeesYourShadow.GUI
 {
@@ -24,10 +23,7 @@ namespace InSpaceNoOneSeesYourShadow.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Vector2 _lastMousePos;
-
         private bool _canDraw;
-
 
         private Matrix4 _view = Matrix4.Identity;
 
@@ -36,38 +32,16 @@ namespace InSpaceNoOneSeesYourShadow.GUI
         private readonly Light _spotLight1 = new Light(new Vector3(1, 5, 1), new Vector3(1f, 1f, 1f));
         private readonly Light _spotLight2 = new Light(new Vector3(5, 10, 0), new Vector3(0.8f, 0.8f, 0f));
         private readonly Light _pointLight = new Light(new Vector3(1, 5, 1), new Vector3(1f, 0f, 0f));
-        //private Vector3[] _translations = new Vector3[20];
-        private Random _random = new Random();
+        private readonly Random _random = new Random();
         private readonly List<ObjVolume> _objects = new List<ObjVolume>();
         private readonly List<ObjVolume> _enemies = new List<ObjVolume>();
         private readonly List<ObjVolume> _projectiles = new List<ObjVolume>();
         private readonly List<ObjVolume> _enemyProjectiles = new List<ObjVolume>();
         private readonly Dictionary<string, int> _textures = new Dictionary<string, int>();
         private readonly Dictionary<string, ShaderProgram> _shaders = new Dictionary<string, ShaderProgram>();
-        private readonly Dictionary<string, Material> _materials = new Dictionary<string, Material>();
         private DispatcherTimer _timer;
 
         private string _activeShader = "light";
-
-        private void LoadMaterials(string filename)
-        {
-            foreach (var mat in Material.LoadFromFile(filename))
-                if (!_materials.ContainsKey(mat.Key)) _materials.Add(mat.Key, mat.Value);
-
-            // Load textures
-            foreach (var mat in _materials.Values)
-            {
-                if (File.Exists(mat.AmbientMap) && !_textures.ContainsKey(mat.AmbientMap)) _textures.Add(mat.AmbientMap, ImageLoader.LoadImage(mat.AmbientMap));
-
-                if (File.Exists(mat.DiffuseMap) && !_textures.ContainsKey(mat.DiffuseMap)) _textures.Add(mat.DiffuseMap, ImageLoader.LoadImage(mat.DiffuseMap));
-
-                if (File.Exists(mat.SpecularMap) && !_textures.ContainsKey(mat.SpecularMap)) _textures.Add(mat.SpecularMap, ImageLoader.LoadImage(mat.SpecularMap));
-
-                if (File.Exists(mat.NormalMap) && !_textures.ContainsKey(mat.NormalMap)) _textures.Add(mat.NormalMap, ImageLoader.LoadImage(mat.NormalMap));
-
-                if (File.Exists(mat.OpacityMap) && !_textures.ContainsKey(mat.OpacityMap)) _textures.Add(mat.OpacityMap, ImageLoader.LoadImage(mat.OpacityMap));
-            }
-        }
 
         private void SpawnEnemyProjectiles()
         {
@@ -140,7 +114,7 @@ namespace InSpaceNoOneSeesYourShadow.GUI
                 }
             }
             ClearCollections();
-           // CheckIfWin();
+            // CheckIfWin();
         }
 
         public MainWindow()
@@ -150,30 +124,41 @@ namespace InSpaceNoOneSeesYourShadow.GUI
 
         private void InitProgram()
         {
-            _lastMousePos = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
-
-            //GL.GenBuffers(1, out _iboElements);
             // Load shaders from file
             _shaders.Add("light", new ShaderProgram("_Resources/Shaders/vs_lit.glsl", "_Resources/Shaders/fs_lit.glsl", true));
             _shaders.Add("PBR", new ShaderProgram("_Resources/Shaders/vs_lit.glsl", "_Resources/Shaders/PBR.glsl", true));
             _activeShader = "PBR";
-            //LoadMaterials("Models/tv.mtl");
-            //LoadMaterials("Models/ship2.mtl");
             _textures.Add("sun.png", ImageLoader.LoadImage("_Resources/Textures/sun.png"));
             _textures.Add("ship2_diffuse.bmp", ImageLoader.LoadImage("_Resources/Textures/ship2_diffuse.bmp"));
             _textures.Add("galaxy.png", ImageLoader.LoadImage("_Resources/Textures/galaxy.png"));
             _textures.Add("dread_ship_t.png", ImageLoader.LoadImage("_Resources/Textures/dread_ship_t.png"));
             CreateScene();
-            //CreateSkybox();
 
-            // Move camera away from origin
             _camera.Position = new Vector3(0f, 0f, -50f);
-            //_camera.Orientation = new Vector3(0, (float)Math.PI/4f, 0);
-            //_camera.Orientation = new Vector3(1,0,0);
-            //_camera.AddRotation(90, -90);
-            //GL.ClipControl(ClipOrigin.LowerLeft, ClipDepthMode.ZeroToOne);
 
-            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+            GL.PolygonMode(MaterialFace.FrontAndBack, _polygonMode);
+        }
+
+        private PolygonMode _polygonMode;
+        private int _counter = 1;
+        private void ChangePolygonMode()
+        {
+            switch (_counter)
+            {
+                case 0:
+                    _polygonMode = PolygonMode.Fill;
+                    _counter++;
+                    break;
+                case 1:
+                    _polygonMode = PolygonMode.Line;
+                    _counter++;
+                    break;
+                case 2:
+                    _polygonMode = PolygonMode.Point;
+                    _counter = 0;
+                    break;
+            }
+            GLCanvas.Refresh();
         }
 
         private ObjVolume _playerShip;
@@ -262,100 +247,39 @@ namespace InSpaceNoOneSeesYourShadow.GUI
             _objects.Add(playerShip);
         }
 
-        private void GLControl_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
+        private void GLControl_Paint(object sender, PaintEventArgs e)
         {
             if (!_canDraw) return;
-            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+            GL.PolygonMode(MaterialFace.FrontAndBack, _polygonMode);
             OnUpdateFrame();
             OnRenderFrame();
         }
 
         private void DrawVolume(ObjVolume volume)
         {
-            volume.VolumeShader.EnableVertexAttribArrays();
+            volume.VolumeShader.EnableVertexAttributesArrays();
             GL.UseProgram(volume.VolumeShader.ProgramId);
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, volume.TextureId);
-            GL.UniformMatrix4(volume.VolumeShader.GetUniform("modelview"), false, ref volume.ModelViewProjectionMatrix);
+            volume.VolumeShader.SetUniform("modelview", volume.ModelViewProjectionMatrix);
 
-            if (volume.VolumeShader.GetAttribute("vColor") != -1)
-            {
-                GL.BindBuffer(BufferTarget.ArrayBuffer, volume.VolumeShader.GetBuffer("vColor"));
-                GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(volume.GetColorData().Length * Vector3.SizeInBytes), volume.GetColorData(), BufferUsageHint.StaticDraw);
-                GL.VertexAttribPointer(volume.VolumeShader.GetAttribute("vColor"), 3, VertexAttribPointerType.Float, true, 0, 0);
-            }
+            volume.VolumeShader.SetAttribute("vColor", volume.GetColorData());
 
 
-            if (volume.VolumeShader.GetAttribute("maintexture") != -1)
-            {
-                //GL.Uniform1(volume.VolumeShader.GetAttribute("maintexture"), volume.TextureId);
-                volume.VolumeShader.SetUniform("maintexture", volume.TextureId);
-            }
+            // volume.VolumeShader.SetUniform("maintexture", volume.TextureId);
 
-            if (volume.VolumeShader.GetUniform("view") != -1)
-            {
-                GL.UniformMatrix4(volume.VolumeShader.GetUniform("view"), false, ref _view);
-            }
-
-            if (volume.VolumeShader.GetUniform("camPos") != -1)
-            {
-                GL.Uniform3(volume.VolumeShader.GetUniform("camPos"), _camera.Position);
-            }
-
-            if (volume.VolumeShader.GetUniform("model") != -1)
-            {
-                GL.UniformMatrix4(volume.VolumeShader.GetUniform("model"), false, ref volume.ModelMatrix);
-            }
-
-            if (volume.VolumeShader.GetUniform("material_ambient") != -1)
-            {
-                GL.Uniform3(volume.VolumeShader.GetUniform("material_ambient"), ref volume.Material.AmbientColor);
-            }
-
-            if (volume.VolumeShader.GetUniform("material_diffuse") != -1)
-            {
-                GL.Uniform3(volume.VolumeShader.GetUniform("material_diffuse"), ref volume.Material.DiffuseColor);
-            }
-
-            if (volume.VolumeShader.GetUniform("material_specular") != -1)
-            {
-                GL.Uniform3(volume.VolumeShader.GetUniform("material_specular"), ref volume.Material.SpecularColor);
-            }
-
-            if (volume.VolumeShader.GetUniform("material_specExponent") != -1)
-            {
-                //GL.Uniform1(volume.VolumeShader.GetUniform("material_specExponent"), volume.Material.SpecularExponent);
-                volume.VolumeShader.SetUniform("material_specExponent", volume.Material.SpecularExponent);
-            }
-
-            if (volume.VolumeShader.GetUniform("light_position") != -1)
-            {
-                GL.Uniform3(volume.VolumeShader.GetUniform("light_position"), ref _directionalLight.Position);
-                //volume.VolumeShader.SetUniform("light_position", _directionalLight.Position);
-            }
-
-            if (volume.VolumeShader.GetUniform("light_color") != -1)
-            {
-                GL.Uniform3(volume.VolumeShader.GetUniform("light_color"), ref _directionalLight.Color);
-            }
-
-            if (volume.VolumeShader.GetUniform("light_diffuseIntensity") != -1)
-            {
-                //GL.Uniform1(volume.VolumeShader.GetUniform("light_diffuseIntensity"), _directionalLight.DiffuseIntensity);
-                volume.VolumeShader.SetUniform("light_diffuseIntensity", _directionalLight.DiffuseIntensity);
-            }
-
-            if (volume.VolumeShader.GetUniform("light_ambientIntensity") != -1)
-            {
-                //GL.Uniform1(volume.VolumeShader.GetUniform("light_ambientIntensity"), _directionalLight.AmbientIntensity);
-                volume.VolumeShader.SetUniform("light_ambientIntensity", _directionalLight.AmbientIntensity);
-            }
-
-            if (volume.VolumeShader.GetUniform("time") != -1)
-            {
-                //GL.Uniform1(volume.VolumeShader.GetUniform("time"), _time);
-                volume.VolumeShader.SetUniform("time", _time);
-            }
+            volume.VolumeShader.SetUniform("view", _view);
+            volume.VolumeShader.SetUniform("camPos", _camera.Position);
+            volume.VolumeShader.SetUniform("model", volume.ModelMatrix);
+            volume.VolumeShader.SetUniform("material_ambient", volume.Material.DiffuseColor);
+            volume.VolumeShader.SetUniform("material_diffuse", volume.Material.DiffuseColor);
+            volume.VolumeShader.SetUniform("material_specular", volume.Material.SpecularColor);
+            volume.VolumeShader.SetUniform("material_specExponent", volume.Material.SpecularExponent);
+            volume.VolumeShader.SetUniform("light_position", _directionalLight.Position);
+            volume.VolumeShader.SetUniform("light_color", _directionalLight.Color);
+            volume.VolumeShader.SetUniform("light_diffuseIntensity", _directionalLight.DiffuseIntensity);
+            volume.VolumeShader.SetUniform("light_ambientIntensity", _directionalLight.AmbientIntensity);
+            volume.VolumeShader.SetUniform("time", _time);
 
             if (volume.VolumeShader == _shaders["PBR"])
             {
@@ -364,23 +288,23 @@ namespace InSpaceNoOneSeesYourShadow.GUI
                 volume.VolumeShader.SetUniform("roughness", volume.PbrValues.Roughness);
                 volume.VolumeShader.SetUniform("reflectionStrength", volume.PbrValues.ReflectionStrength);
                 volume.VolumeShader.SetUniform("refraction", volume.PbrValues.Refraction);
-                volume.VolumeShader.SetVec3("dirLight.direction", _directionalLight.Position);
-                volume.VolumeShader.SetVec3("dirLight.color", _directionalLight.Color);
+                volume.VolumeShader.SetUniform("dirLight.direction", _directionalLight.Position);
+                volume.VolumeShader.SetUniform("dirLight.color", _directionalLight.Color);
                 volume.VolumeShader.SetUniform("dirLight.lightStrength", 10f);
-                volume.VolumeShader.SetVec3("pointLight.position", _pointLight.Position);
-                volume.VolumeShader.SetVec3("pointLight.color", _pointLight.Color);
+                volume.VolumeShader.SetUniform("pointLight.position", _pointLight.Position);
+                volume.VolumeShader.SetUniform("pointLight.color", _pointLight.Color);
                 volume.VolumeShader.SetUniform("spotLight[0].cutOff", (float)Math.Cos(MathHelper.RadiansToDegrees(10f)));
                 volume.VolumeShader.SetUniform("spotLight[0].outerCutOff", (float)Math.Cos(MathHelper.RadiansToDegrees(80f)));
                 //volume.VolumeShader.SetVec3("spotLight[0].color", _spotLight1.Color);
-                volume.VolumeShader.SetVec3("spotLight[0].color", new Vector3(0, 1, 0));
+                volume.VolumeShader.SetUniform("spotLight[0].color", new Vector3(0, 1, 0));
                 //volume.VolumeShader.SetVec3("spotLight[0].position", _spotLight1.Position);
-                volume.VolumeShader.SetVec3("spotLight[0].position", _playerShip.Position);
-                volume.VolumeShader.SetVec3("spotLight[0].direction", new Vector3(0, 1, 0));
+                volume.VolumeShader.SetUniform("spotLight[0].position", _playerShip.Position);
+                volume.VolumeShader.SetUniform("spotLight[0].direction", new Vector3(0, 1, 0));
                 volume.VolumeShader.SetUniform("spotLight[1].cutOff", (float)Math.Cos(MathHelper.RadiansToDegrees(0f)));
                 volume.VolumeShader.SetUniform("spotLight[1].outerCutOff", (float)Math.Cos(MathHelper.RadiansToDegrees(0f)));
-                volume.VolumeShader.SetVec3("spotLight[1].color", _spotLight2.Color);
-                volume.VolumeShader.SetVec3("spotLight[1].position", _spotLight2.Position);
-                volume.VolumeShader.SetVec3("spotLight[1].direction", new Vector3(0, -1, 0));
+                volume.VolumeShader.SetUniform("spotLight[1].color", _spotLight2.Color);
+                volume.VolumeShader.SetUniform("spotLight[1].position", _spotLight2.Position);
+                volume.VolumeShader.SetUniform("spotLight[1].direction", new Vector3(0, -1, 0));
             }
 
             GL.BindVertexArray(volume.VAO);
@@ -392,7 +316,7 @@ namespace InSpaceNoOneSeesYourShadow.GUI
             //    GL.PolygonMode(MaterialFace.FrontAndBack, _polygonMode);
             //    DrawVolume(child, indexAt);
             //}
-            volume.VolumeShader.DisableVertexAttribArrays();
+            volume.VolumeShader.DisableVertexAttributesArrays();
 
         }
 
@@ -406,8 +330,7 @@ namespace InSpaceNoOneSeesYourShadow.GUI
             GL.Enable(EnableCap.CullFace);
             //GL.Enable(EnableCap.Blend);
             //GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.DstAlpha);
-            //DrawSkybox();
-            // _shaders[_activeShader].EnableVertexAttribArrays();
+            // _shaders[_activeShader].EnableVertexAttributesArrays();
             // _directionalLight.Position += new Vector3((float)Math.Sin(_time));
             SpawnEnemyProjectiles();
             foreach (var v in _objects)
@@ -419,7 +342,7 @@ namespace InSpaceNoOneSeesYourShadow.GUI
                 DrawVolume(v);
             }
 
-            // _shaders[_activeShader].DisableVertexAttribArrays();
+            // _shaders[_activeShader].DisableVertexAttributesArrays();
 
             GL.Flush();
             GLCanvas.SwapBuffers();
@@ -452,21 +375,19 @@ namespace InSpaceNoOneSeesYourShadow.GUI
 
         private void ProcessInput()
         {
-            if (Keyboard.GetState().IsKeyDown(Key.Escape)) Close();
-
-            if (Keyboard.GetState().IsKeyDown(Key.A)) _playerShip.Position += new Vector3(0.5f, 0, 0);
-
-            if (Keyboard.GetState().IsKeyDown(Key.D)) _playerShip.Position += new Vector3(-0.5f, 0, 0);
-
-            if (Mouse.GetState().RightButton == ButtonState.Pressed)
+            if (Keyboard.GetState().IsKeyDown(Key.A))
             {
-                var delta = _lastMousePos - new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
-                _lastMousePos += delta;
-
-                _camera.AddRotation(delta.X, delta.Y);
-                _lastMousePos = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
+                if (_playerShip.Position.X > 45)
+                    return;
+                _playerShip.Position += new Vector3(0.5f, 0, 0);
             }
 
+            if (Keyboard.GetState().IsKeyDown(Key.D))
+            {
+                if (_playerShip.Position.X < -45)
+                    return;
+                _playerShip.Position += new Vector3(-0.5f, 0, 0);
+            }
         }
 
         private void GLControl_Load(object sender, EventArgs e)
@@ -510,6 +431,10 @@ namespace InSpaceNoOneSeesYourShadow.GUI
                 arrow.Bind();
                 _objects.Add(arrow);
                 _projectiles.Add(arrow);
+            }
+            else if (e.KeyCode == Keys.P)
+            {
+                ChangePolygonMode();
             }
         }
     }
