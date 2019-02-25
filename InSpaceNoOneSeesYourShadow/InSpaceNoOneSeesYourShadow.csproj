@@ -91,6 +91,7 @@
     </ApplicationDefinition>
     <Compile Include="Helpers\ImageLoader.cs" />
     <Compile Include="Helpers\Skybox.cs" />
+    <Compile Include="Logic\Game.cs" />
     <Compile Include="Objects3D\Material.cs" />
     <Compile Include="Objects3D\Shapes\ObjVolume.cs" />
     <Compile Include="Objects3D\Volume.cs" />
