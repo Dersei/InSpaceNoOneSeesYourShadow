@@ -2,43 +2,34 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using InSpaceNoOneSeesYourShadow.Content;
+using InSpaceNoOneSeesYourShadow.Objects3D;
 using OpenTK;
 
-namespace InSpaceNoOneSeesYourShadow.Objects3D
+namespace InSpaceNoOneSeesYourShadow.Content
 {
-    /// <summary>
-    /// Stores information about a material applied to a <c>Volume</c>
-    /// </summary>
-    public class Material
+    internal static class MaterialLoader
     {
-        public Vector3 AmbientColor;
-        public Vector3 DiffuseColor;
-        public Vector3 SpecularColor;
-        public float SpecularExponent = 1;
-        public float Opacity = 1.0f;
+        private static readonly Dictionary<string, Dictionary<string, Material>> Cache = new Dictionary<string, Dictionary<string, Material>>();
 
-        public string AmbientMap = "";
-        public string DiffuseMap = "";
-        public string SpecularMap = "";
-        public string OpacityMap = "";
-        public string NormalMap = "";
-
-        public Material()
+        private static bool CheckIfCached(string name, out Dictionary<string, Material> obj)
         {
-        }
+            if (Cache.ContainsKey(name))
+            {
+                obj = Cache[name];
+                return true;
+            }
 
-        public Material(Vector3 ambient, Vector3 diffuse, Vector3 specular, float specexponent = 1.0f, float opacity = 1.0f)
-        {
-            AmbientColor = ambient;
-            DiffuseColor = diffuse;
-            SpecularColor = specular;
-            SpecularExponent = specexponent;
-            Opacity = opacity;
+            obj = default;
+            return false;
         }
 
         public static Dictionary<string, Material> LoadFromFile(string filename)
         {
+            if (CheckIfCached(filename, out var result))
+            {
+                return result;
+            }
+
             Dictionary<string, Material> mats = new Dictionary<string, Material>();
 
             try
@@ -95,6 +86,8 @@ namespace InSpaceNoOneSeesYourShadow.Objects3D
             {
                 Console.WriteLine("Error loading file: {0}", filename);
             }
+
+            Cache.Add(filename, mats);
 
             return mats;
         }
@@ -204,7 +197,7 @@ namespace InSpaceNoOneSeesYourShadow.Objects3D
                     success |= float.TryParse(colorparts[1], style, culture, out vec.Y);
                     success |= float.TryParse(colorparts[2], style, culture, out vec.Z);
 
-                    output.SpecularColor = new Vector3(float.Parse(colorparts[0],style,culture), float.Parse(colorparts[1],style,culture), float.Parse(colorparts[2],style,culture));
+                    output.SpecularColor = new Vector3(float.Parse(colorparts[0], style, culture), float.Parse(colorparts[1], style, culture), float.Parse(colorparts[2], style, culture));
 
                     // If any of the parses failed, report the error
                     if (!success)

@@ -24,7 +24,8 @@ namespace InSpaceNoOneSeesYourShadow.Logic
         private readonly List<ObjVolume> _objects = new List<ObjVolume>();
         private readonly List<ObjVolume> _enemies = new List<ObjVolume>();
         private readonly List<ObjVolume> _projectiles = new List<ObjVolume>();
-        private readonly List<ObjVolume> _enemyProjectiles = new List<ObjVolume>();
+        private readonly List<ObjVolume> _activeEnemyProjectiles = new List<ObjVolume>();
+        private readonly List<ObjVolume> _cachedEnemyProjectiles = new List<ObjVolume>();
         private readonly Dictionary<string, int> _textures = new Dictionary<string, int>();
         private readonly Dictionary<string, ShaderProgram> _shaders = new Dictionary<string, ShaderProgram>();
         private string _activeShader = "light";
@@ -80,22 +81,26 @@ namespace InSpaceNoOneSeesYourShadow.Logic
         public void SpawnEnemyProjectiles()
         {
             var chance = _random.Next(0, 100);
-            if (chance > 5 || _enemyProjectiles.Count > 8)
+            if (chance > 5 || _activeEnemyProjectiles.Count > 8)
             {
                 return;
             }
             var temp = _enemies[_random.Next(0, _enemies.Count)];
-            ObjVolume arrow = ObjVolume.LoadFromFile("_Resources/Models/cone.obj");
-            arrow.TextureId = _textures["sun.png"];
-            arrow.Position = temp.Position;// + new Vector3(0,1,0);
-            arrow.Rotation = new Vector3(-MathHelper.PiOver2, -MathHelper.PiOver2, -MathHelper.PiOver2);
-            arrow.Material = new Material(new Vector3(0.15f), new Vector3(1), new Vector3(0.2f));
+            var arrow = _cachedEnemyProjectiles.Except(_activeEnemyProjectiles).FirstOrDefault();
+            if (arrow is null) return;
+            arrow.Position = temp.Position + new Vector3(0,1,0);
             arrow.PositionModifier = f => arrow.Position - new Vector3(0, 0.2f, 0);
-            arrow.ScaleModifier = f => new Vector3(1f, 1f, 1f);
-            arrow.VolumeShader = _shaders["light"];
-            arrow.Bind();
+            //ObjVolume arrow = ObjVolume.LoadFromFile("_Resources/Models/cone.obj");
+            //arrow.TextureId = _textures["sun.png"];
+            //arrow.Position = temp.Position;// + new Vector3(0,1,0);
+            //arrow.Rotation = new Vector3(-MathHelper.PiOver2, -MathHelper.PiOver2, -MathHelper.PiOver2);
+            //arrow.Material = new Material(new Vector3(0.15f), new Vector3(1), new Vector3(0.2f));
+            //arrow.PositionModifier = f => arrow.Position - new Vector3(0, 0.2f, 0);
+            //arrow.ScaleModifier = f => new Vector3(1f, 1f, 1f);
+            //arrow.VolumeShader = _shaders["light"];
+            //arrow.Bind();
             _objects.Add(arrow);
-            _enemyProjectiles.Add(arrow);
+            _activeEnemyProjectiles.Add(arrow);
             //_projectiles.Add(arrow);
         }
 
@@ -107,15 +112,15 @@ namespace InSpaceNoOneSeesYourShadow.Logic
         public void ClearCollections()
         {
             _projectiles.RemoveAll(p => p.ShouldNotRender);
-            _enemyProjectiles.RemoveAll(ep => ep.ShouldNotRender);
-            _enemyProjectiles.RemoveAll(ep => ep.Position.Y < -50);
+            _activeEnemyProjectiles.RemoveAll(ep => ep.ShouldNotRender);
+            _activeEnemyProjectiles.RemoveAll(ep => ep.Position.Y < -50);
             _enemies.RemoveAll(e => e.ShouldNotRender);
         }
 
         public void CheckCollisionsWithPlayer()
         {
-            if (_enemyProjectiles.Count == 0) return;
-            foreach (var projectile in _enemyProjectiles.Where(p => !p.ShouldNotRender))
+            if (_activeEnemyProjectiles.Count == 0) return;
+            foreach (var projectile in _activeEnemyProjectiles.Where(p => !p.ShouldNotRender))
             {
 
                 if (CheckCollision(projectile.Position.Xy, _playerShip.Position.Xy))
@@ -161,6 +166,20 @@ namespace InSpaceNoOneSeesYourShadow.Logic
             CreateScene();
 
             Camera.Position = new Vector3(0f, 0f, -50f);
+        }
+
+        private ObjVolume CreateEnemyProjectile()
+        {
+            ObjVolume arrow = ObjVolume.LoadFromFile("_Resources/Models/cone.obj");
+            arrow.TextureId = _textures["sun.png"];
+            arrow.Position = Vector3.Zero;
+            arrow.Rotation = new Vector3(-MathHelper.PiOver2, -MathHelper.PiOver2, -MathHelper.PiOver2);
+            arrow.Material = new Material(new Vector3(0.15f), new Vector3(1), new Vector3(0.2f));
+            arrow.PositionModifier = f => arrow.Position;
+            arrow.ScaleModifier = f => new Vector3(1f, 1f, 1f);
+            arrow.VolumeShader = _shaders["light"];
+            arrow.Bind();
+            return arrow;
         }
 
         private ObjVolume _playerShip;
@@ -236,6 +255,11 @@ namespace InSpaceNoOneSeesYourShadow.Logic
             playerShip.Bind();
             _playerShip = playerShip;
             _objects.Add(playerShip);
+
+            for (var i = 0; i < 8; i++)
+            {
+                _cachedEnemyProjectiles.Add(CreateEnemyProjectile());
+            }
         }
 
         public void DrawVolume(ObjVolume volume)
@@ -299,6 +323,24 @@ namespace InSpaceNoOneSeesYourShadow.Logic
 
         }
 
+        private void ShootPlayerProjectile()
+        {
+            var arrow = ObjVolume.LoadFromFile("_Resources/Models/arrow.obj");
+            arrow.TextureId = _textures["sun.png"];
+            arrow.Position = _playerShip.Position;// + new Vector3(0,1,0);
+            arrow.Rotation = new Vector3(-MathHelper.PiOver2, 0, 0);
+            arrow.Material = new Material(new Vector3(0.15f), new Vector3(1), new Vector3(0.2f));
+            arrow.PositionModifier = f => arrow.Position + new Vector3(0, 0.2f, 0);
+            arrow.ScaleModifier = f => new Vector3(1f, 1f, 1f);
+            arrow.VolumeShader = _shaders["light"];
+            arrow.Bind();
+            _objects.Add(arrow);
+            _projectiles.Add(arrow);
+        }
+
+
+        private bool _wasSpacePressed;
+
         public void ProcessInput()
         {
             if (Keyboard.GetState().IsKeyDown(Key.A))
@@ -313,20 +355,14 @@ namespace InSpaceNoOneSeesYourShadow.Logic
                     return;
                 _playerShip.Position += new Vector3(-0.5f, 0, 0);
             }
-            if (Keyboard.GetState().IsKeyDown(Key.Space))
+            if (Keyboard.GetState().IsKeyDown(Key.Space) && !_wasSpacePressed)
             {
-                ObjVolume arrow = ObjVolume.LoadFromFile("_Resources/Models/arrow.obj");
-                arrow.TextureId = _textures["sun.png"];
-                arrow.Position = _playerShip.Position;// + new Vector3(0,1,0);
-                arrow.Rotation = new Vector3(-MathHelper.PiOver2, 0, 0);
-                arrow.Material = new Material(new Vector3(0.15f), new Vector3(1), new Vector3(0.2f));
-                arrow.PositionModifier = f => arrow.Position + new Vector3(0, 0.2f, 0);
-                arrow.ScaleModifier = f => new Vector3(1f, 1f, 1f);
-                arrow.VolumeShader = _shaders["light"];
-                arrow.Bind();
-                _objects.Add(arrow);
-                _projectiles.Add(arrow);
+                ShootPlayerProjectile();
+                _wasSpacePressed = true;
+                return;
             }
+
+            _wasSpacePressed = !Keyboard.GetState().IsKeyUp(Key.Space);
         }
     }
 }

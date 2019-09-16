@@ -32,6 +32,9 @@ namespace InSpaceNoOneSeesYourShadow.GUI
 
         public MainWindow()
         {
+            WindowStartupLocation = WindowStartupLocation.Manual;
+            Left = 0;
+            Top = 0;
             InitializeComponent();
         }
 

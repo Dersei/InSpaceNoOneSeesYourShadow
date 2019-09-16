@@ -2,228 +2,26 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using InSpaceNoOneSeesYourShadow.Helpers;
+using InSpaceNoOneSeesYourShadow.Objects3D.Shapes;
 using OpenTK;
-using OpenTK.Graphics.OpenGL;
 
-namespace InSpaceNoOneSeesYourShadow.Objects3D.Shapes
+namespace InSpaceNoOneSeesYourShadow.Content
 {
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct Vertex
+    internal static class ModelLoader
     {
-        public Vector3 Position;
-        public Vector3 Normal;
-        public Vector2 TexCoords;
-    }
+        private static readonly Dictionary<string, ObjVolume> Cache = new Dictionary<string, ObjVolume>();
 
-    internal class ObjVolume : Volume
-    {
-        public PBRValues PbrValues { get; set; }
-
-        public struct PBRValues
+        private static bool CheckIfCached(string name, out ObjVolume obj)
         {
-            public float AO { get; set; }
-            public float Metallic { get; set; }
-            public float Roughness { get; set; }
-            public float ReflectionStrength { get; set; }
-            public float Refraction { get; set; }
+            if (Cache.ContainsKey(name))
+            {
+                obj = Cache[name];
+                return true;
+            }
+
+            obj = default;
+            return false;
         }
-
-        public readonly List<(FaceVertex, FaceVertex, FaceVertex)> _faces = new List<(FaceVertex, FaceVertex, FaceVertex)>();
-        public override int VerticesCount => _faces.Count * 3;
-
-        public override int IndicesCount => _faces.Count * 3;
-
-        public override int ColorDataCount => _faces.Count * 3;
-
-        public override int TextureCoordsCount => _faces.Count * 3;
-
-        public List<Vertex> VerticesStruct = new List<Vertex>();
-
-        public bool ShouldNotRender { get; set; }
-
-        public int VAO;
-        public int VBO;
-        public int EBO;
-
-        public ShaderProgram VolumeShader { get; set; }
-
-        public unsafe void Bind(bool onlyStructs = false)
-        {
-            var normals = GetNormals();
-            var texcoords = GetTextureCoords();
-            var vertices = GetVertices();
-
-            for (int i = 0; i < vertices.Length; i++)
-            {
-                VerticesStruct.Add(new Vertex()
-                {
-                    Normal = normals[i],
-                    TexCoords = texcoords[i],
-                    Position = vertices[i]
-                });
-            }
-
-            if (onlyStructs) return;
-
-
-            VAO = GL.GenVertexArray();
-            VBO = GL.GenBuffer();
-            EBO = GL.GenBuffer();
-
-            GL.BindVertexArray(VAO);
-
-            GL.BindBuffer(BufferTarget.ArrayBuffer, VBO);
-
-            GL.BufferData(BufferTarget.ArrayBuffer, VerticesStruct.Count * sizeof(Vertex), VerticesStruct.ToArray(), BufferUsageHint.StaticDraw);
-
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, EBO);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, GetIndices().Length * sizeof(int), GetIndices(), BufferUsageHint.StaticDraw);
-
-            GL.EnableVertexAttribArray(0);
-            GL.VertexAttribPointer(VolumeShader.GetAttribute("vPosition"), 3, VertexAttribPointerType.Float, false, sizeof(Vertex), 0);
-            GL.EnableVertexAttribArray(1);
-            GL.VertexAttribPointer(VolumeShader.GetAttribute("vNormal"), 3, VertexAttribPointerType.Float, true, sizeof(Vertex), Vector3.SizeInBytes);
-            GL.EnableVertexAttribArray(2);
-            GL.VertexAttribPointer(VolumeShader.GetAttribute("texcoord"), 2, VertexAttribPointerType.Float, true, sizeof(Vertex), Vector3.SizeInBytes * 2);
-
-            GL.BindVertexArray(0);
-
-        }
-
-        public void CreateDictionary()
-        {
-            GL.GetProgram(VolumeShader.ProgramId, GetProgramParameterName.ActiveAttributes, out int length);
-            Console.WriteLine(length);
-            string names = "";
-            for (int i = 0; i < length; i++)
-            {
-                GL.GetActiveAttrib(VolumeShader.ProgramId, i, 20, out _, out _, out _, out var name);
-
-            }
-            Console.WriteLine(names);
-            GL.GetProgram(VolumeShader.ProgramId, GetProgramParameterName.ActiveUniforms, out int lengthU);
-            Console.WriteLine(lengthU);
-            string namesU = "";
-            for (int i = 0; i < lengthU; i++)
-            {
-                GL.GetActiveUniform(VolumeShader.ProgramId, i, 20, out _, out _, out _, out var name);
-                namesU += name + "\n";
-            }
-            Console.WriteLine(namesU);
-        }
-
-        public void Draw()
-        {
-
-        }
-        /// <summary>
-        /// Get vertices for this object
-        /// </summary>
-        /// <returns></returns>
-        public override Vector3[] GetVertices()
-        {
-            List<Vector3> vertices = new List<Vector3>();
-
-            foreach (var face in _faces)
-            {
-                vertices.Add(face.Item1.Position);
-                vertices.Add(face.Item2.Position);
-                vertices.Add(face.Item3.Position);
-            }
-
-            foreach (var child in Children)
-            {
-                vertices.AddRange(child.GetVertices());
-            }
-
-            return vertices.ToArray();
-        }
-
-        /// <summary>
-        /// Get indices to draw this object
-        /// </summary>
-        /// <param name="offset">value to number first vertex in object</param>
-        /// <returns>Array of indices offset to match buffered data</returns>
-        public override int[] GetIndices(int offset = 0)
-        {
-            var indices = Enumerable.Range(offset, IndicesCount).ToList();
-            var off = VerticesCount + offset;
-
-            foreach (var child in Children)
-            {
-                indices.AddRange(child.GetIndices(off));
-                off += child.VerticesCount;
-            }
-
-            return indices.ToArray();
-        }
-
-        /// <summary>
-        /// Get color data.
-        /// </summary>
-        /// <returns></returns>
-        public override Vector3[] GetColorData()
-        {
-            var colors = new Vector3[ColorDataCount].ToList();
-            foreach (var child in Children)
-            {
-                colors.AddRange(child.GetColorData());
-            }
-            return colors.ToArray();
-        }
-
-        /// <summary>
-        /// Get texture coordinates
-        /// </summary>
-        /// <returns></returns>
-        public override Vector2[] GetTextureCoords()
-        {
-            List<Vector2> coords = new List<Vector2>();
-
-            foreach (var face in _faces)
-            {
-                coords.Add(face.Item1.TextureCoords);
-                coords.Add(face.Item2.TextureCoords);
-                coords.Add(face.Item3.TextureCoords);
-            }
-
-            foreach (var child in Children)
-            {
-                coords.AddRange(child.GetTextureCoords());
-            }
-            return coords.ToArray();
-        }
-
-
-        /// <summary>
-        /// Calculates the model matrix from transforms
-        /// </summary>
-        public override void CalculateModelMatrix()
-        {
-            ModelMatrix = Matrix4.CreateScale(Scale) * Matrix4.CreateRotationX(Rotation.X) * Matrix4.CreateRotationY(Rotation.Y) * Matrix4.CreateRotationZ(Rotation.Z) * Matrix4.CreateTranslation(Position);
-            if (Parent != null)
-            {
-                ModelMatrix *= Parent.ModelMatrix;
-            }
-            foreach (var volume in Children)
-            {
-                volume.CalculateModelMatrix();
-            }
-        }
-
-        public override void UpdateMatrices(Matrix4 newValue)
-        {
-            ViewProjectionMatrix = newValue;
-            ModelViewProjectionMatrix = ModelMatrix * ViewProjectionMatrix;
-
-            foreach (var child in Children)
-            {
-                child.UpdateMatrices(newValue);
-            }
-        }
-
         /// <summary>
         /// Loads a model from a file.
         /// </summary>
@@ -231,6 +29,11 @@ namespace InSpaceNoOneSeesYourShadow.Objects3D.Shapes
         /// <returns>ObjVolume of loaded model</returns>
         public static ObjVolume LoadFromFile(string filename)
         {
+            if (CheckIfCached(filename, out var result))
+            {
+                return result;
+            }
+
             ObjVolume obj = new ObjVolume();
             try
             {
@@ -248,19 +51,22 @@ namespace InSpaceNoOneSeesYourShadow.Objects3D.Shapes
                 Console.WriteLine($@"Error loading file: {filename}");
             }
 
+            Cache.Add(filename, obj);
+
             return obj;
         }
 
-        public static ObjVolume LoadFromString(string obj)
+
+        private static ObjVolume LoadFromString(string obj)
         {
-            // Seperate lines from the file
+            // Separate lines from the file
             var lines = new List<string>(obj.Split('\n'));
 
             // Lists to hold model data
             var vertices = new List<Vector3>();
             var normals = new List<Vector3>();
             var texs = new List<Vector2>();
-            var faces = new List<(TempVertex, TempVertex, TempVertex)>();
+            var faces = new List<Tuple<ObjVolume.TempVertex, ObjVolume.TempVertex, ObjVolume.TempVertex>>();
 
             // Base values
             vertices.Add(new Vector3());
@@ -369,7 +175,7 @@ namespace InSpaceNoOneSeesYourShadow.Objects3D.Shapes
                     // Cut off beginning of line
                     var temp = line.Substring(2);
 
-                    var face = (new TempVertex(), new TempVertex(), new TempVertex());
+                    var face = new Tuple<ObjVolume.TempVertex, ObjVolume.TempVertex, ObjVolume.TempVertex>(new ObjVolume.TempVertex(), new ObjVolume.TempVertex(), new ObjVolume.TempVertex());
 
                     if (temp.Trim().Count(c => c == ' ') == 2) // Check if there's enough elements for a face
                     {
@@ -431,10 +237,10 @@ namespace InSpaceNoOneSeesYourShadow.Objects3D.Shapes
                         }
                         else
                         {
-                            var tv1 = new TempVertex(v1, n1, t1);
-                            var tv2 = new TempVertex(v2, n2, t2);
-                            var tv3 = new TempVertex(v3, n3, t3);
-                            face = (tv1, tv2, tv3);
+                            var tv1 = new ObjVolume.TempVertex(v1, n1, t1);
+                            var tv2 = new ObjVolume.TempVertex(v2, n2, t2);
+                            var tv3 = new ObjVolume.TempVertex(v3, n3, t3);
+                            face = new Tuple<ObjVolume.TempVertex, ObjVolume.TempVertex, ObjVolume.TempVertex>(tv1, tv2, tv3);
                             faces.Add(face);
                         }
                     }
@@ -458,60 +264,6 @@ namespace InSpaceNoOneSeesYourShadow.Objects3D.Shapes
             }
 
             return vol;
-        }
-
-        public class TempVertex
-        {
-            public readonly int Vertex;
-            public readonly int Normal;
-            public readonly int TexCoords;
-
-            public TempVertex(int vertex = 0, int norm = 0, int tex = 0)
-            {
-                Vertex = vertex;
-                Normal = norm;
-                TexCoords = tex;
-            }
-        }
-
-        public override Vector3[] GetNormals()
-        {
-            if (base.GetNormals().Length > 0)
-            {
-                return base.GetNormals();
-            }
-
-            List<Vector3> normals = new List<Vector3>();
-
-            foreach (var face in _faces)
-            {
-                normals.Add(face.Item1.Normal);
-                normals.Add(face.Item2.Normal);
-                normals.Add(face.Item3.Normal);
-            }
-
-            foreach (var child in Children)
-            {
-                normals.AddRange(child.GetNormals());
-            }
-
-            return normals.ToArray();
-        }
-
-        public override int NormalCount => _faces.Count * 3;
-    }
-
-    internal class FaceVertex
-    {
-        public Vector3 Position;
-        public Vector3 Normal;
-        public Vector2 TextureCoords;
-
-        public FaceVertex(Vector3 pos, Vector3 norm, Vector2 texCoords)
-        {
-            Position = pos;
-            Normal = norm;
-            TextureCoords = texCoords;
         }
     }
 }

@@ -89,6 +89,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Content\MaterialLoader.cs" />
+    <Compile Include="Content\ModelLoader.cs" />
+    <Compile Include="Content\Texture2DLoader.cs" />
+    <Compile Include="GameObject.cs" />
     <Compile Include="Helpers\ImageLoader.cs" />
     <Compile Include="Helpers\Skybox.cs" />
     <Compile Include="Logic\Game.cs" />
@@ -103,6 +107,7 @@
     <Compile Include="Helpers\TextUtils.cs" />
     <Compile Include="Helpers\Cameras\TutorialCamera.cs" />
     <Compile Include="Helpers\Utils.cs" />
+    <Compile Include="Transform.cs" />
     <Page Include="GUI\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
