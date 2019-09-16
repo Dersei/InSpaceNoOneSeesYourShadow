@@ -92,6 +92,7 @@
     <Compile Include="Content\MaterialLoader.cs" />
     <Compile Include="Content\ModelLoader.cs" />
     <Compile Include="Content\Texture2DLoader.cs" />
+    <Compile Include="GameManager.cs" />
     <Compile Include="GameObject.cs" />
     <Compile Include="Helpers\ImageLoader.cs" />
     <Compile Include="Helpers\Skybox.cs" />

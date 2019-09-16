@@ -2,7 +2,7 @@
 
 namespace InSpaceNoOneSeesYourShadow.Helpers
 {
-    internal class Light
+    public class Light
     {
         public Light(Vector3 position, Vector3 color, float diffuseIntensity = 1.0f, float ambientIntensity = 1.0f)
         {

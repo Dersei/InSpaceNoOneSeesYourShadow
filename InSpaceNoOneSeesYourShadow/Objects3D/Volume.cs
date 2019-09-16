@@ -7,32 +7,34 @@ namespace InSpaceNoOneSeesYourShadow.Objects3D
 {
     public abstract class Volume
     {
-        public Vector3 Position { get; set; } = Vector3.Zero;
-        public Vector3 Rotation { get; set; } = Vector3.Zero;
-        public Vector3 Scale { get; set; } = Vector3.Zero;
-        public Volume Parent;
-        public List<Volume> Children = new List<Volume>();
-        public Func<float, Vector3> PositionModifier { get; set; }
-        public Func<float, Vector3> RotationModifier { get; set; }
-        public Func<float, Vector3> ScaleModifier { get; set; }
+        //public Vector3 Position { get; set; } = Vector3.Zero;
+        //public Vector3 Rotation { get; set; } = Vector3.Zero;
+        //public Vector3 Scale { get; set; } = Vector3.Zero;
+        //public Volume Parent;
+        //public List<Volume> Children = new List<Volume>();
+        //public Func<float, Vector3> PositionModifier { get; set; }
+        //public Func<float, Vector3> RotationModifier { get; set; }
+        //public Func<float, Vector3> ScaleModifier { get; set; }
+
+        public GameObject GameObject;
 
         public Volume()
         {
-            PositionModifier = _ => Position;
-            RotationModifier = _ => Rotation;
-            ScaleModifier = _ => Scale;
+            //PositionModifier = _ => Position;
+            //RotationModifier = _ => Rotation;
+            //ScaleModifier = _ => Scale;
         }
 
         public ShaderProgram ShaderId { get; set; }
         public void Update(float value)
         {
-            Position = PositionModifier(value);
-            Rotation = RotationModifier(value);
-            Scale = ScaleModifier(value);
-            foreach (var child in Children)
-            {
-                child.Update(value);
-            }
+            //Position = PositionModifier(value);
+            //Rotation = RotationModifier(value);
+            //Scale = ScaleModifier(value);
+            //foreach (var child in Children)
+            //{
+            //    child.Update(value);
+            //}
         }
 
         public virtual int VerticesCount { get; set; }
@@ -57,8 +59,8 @@ namespace InSpaceNoOneSeesYourShadow.Objects3D
 
         public void AddChild(Volume child)
         {
-            child.Parent = this;
-            Children.Add(child);
+            //child.Parent = this;
+            //Children.Add(child);
         }
 
         public virtual Vector3[] GetNormals()

@@ -17,7 +17,7 @@ namespace InSpaceNoOneSeesYourShadow.Objects3D.Shapes
         public Vector2 TexCoords;
     }
 
-    internal class ObjVolume : Volume
+    public class ObjVolume : Volume
     {
         public PBRValues PbrValues { get; set; }
 
@@ -133,10 +133,10 @@ namespace InSpaceNoOneSeesYourShadow.Objects3D.Shapes
                 vertices.Add(face.Item3.Position);
             }
 
-            foreach (var child in Children)
-            {
-                vertices.AddRange(child.GetVertices());
-            }
+            //foreach (var child in Children)
+            //{
+            //    vertices.AddRange(child.GetVertices());
+            //}
 
             return vertices.ToArray();
         }
@@ -151,11 +151,11 @@ namespace InSpaceNoOneSeesYourShadow.Objects3D.Shapes
             var indices = Enumerable.Range(offset, IndicesCount).ToList();
             var off = VerticesCount + offset;
 
-            foreach (var child in Children)
-            {
-                indices.AddRange(child.GetIndices(off));
-                off += child.VerticesCount;
-            }
+            //foreach (var child in Children)
+            //{
+            //    indices.AddRange(child.GetIndices(off));
+            //    off += child.VerticesCount;
+            //}
 
             return indices.ToArray();
         }
@@ -167,10 +167,10 @@ namespace InSpaceNoOneSeesYourShadow.Objects3D.Shapes
         public override Vector3[] GetColorData()
         {
             var colors = new Vector3[ColorDataCount].ToList();
-            foreach (var child in Children)
-            {
-                colors.AddRange(child.GetColorData());
-            }
+            //foreach (var child in Children)
+            //{
+            //    colors.AddRange(child.GetColorData());
+            //}
             return colors.ToArray();
         }
 
@@ -189,10 +189,10 @@ namespace InSpaceNoOneSeesYourShadow.Objects3D.Shapes
                 coords.Add(face.Item3.TextureCoords);
             }
 
-            foreach (var child in Children)
-            {
-                coords.AddRange(child.GetTextureCoords());
-            }
+            //foreach (var child in Children)
+            //{
+            //    coords.AddRange(child.GetTextureCoords());
+            //}
             return coords.ToArray();
         }
 
@@ -202,15 +202,15 @@ namespace InSpaceNoOneSeesYourShadow.Objects3D.Shapes
         /// </summary>
         public override void CalculateModelMatrix()
         {
-            ModelMatrix = Matrix4.CreateScale(Scale) * Matrix4.CreateRotationX(Rotation.X) * Matrix4.CreateRotationY(Rotation.Y) * Matrix4.CreateRotationZ(Rotation.Z) * Matrix4.CreateTranslation(Position);
-            if (Parent != null)
-            {
-                ModelMatrix *= Parent.ModelMatrix;
-            }
-            foreach (var volume in Children)
-            {
-                volume.CalculateModelMatrix();
-            }
+            ModelMatrix = Matrix4.CreateScale(GameObject.Transform.Scale) * Matrix4.CreateRotationX(GameObject.Transform.Rotation.X) * Matrix4.CreateRotationY(GameObject.Transform.Rotation.Y) * Matrix4.CreateRotationZ(GameObject.Transform.Rotation.Z) * Matrix4.CreateTranslation(GameObject.Transform.Position);
+            //if (Parent != null)
+            //{
+            //    ModelMatrix *= Parent.ModelMatrix;
+            //}
+            //foreach (var volume in Children)
+            //{
+            //    volume.CalculateModelMatrix();
+            //}
         }
 
         public override void UpdateMatrices(Matrix4 newValue)
@@ -218,10 +218,10 @@ namespace InSpaceNoOneSeesYourShadow.Objects3D.Shapes
             ViewProjectionMatrix = newValue;
             ModelViewProjectionMatrix = ModelMatrix * ViewProjectionMatrix;
 
-            foreach (var child in Children)
-            {
-                child.UpdateMatrices(newValue);
-            }
+            //foreach (var child in Children)
+            //{
+            //    child.UpdateMatrices(newValue);
+            //}
         }
 
         /// <summary>
@@ -490,10 +490,10 @@ namespace InSpaceNoOneSeesYourShadow.Objects3D.Shapes
                 normals.Add(face.Item3.Normal);
             }
 
-            foreach (var child in Children)
-            {
-                normals.AddRange(child.GetNormals());
-            }
+            //foreach (var child in Children)
+            //{
+            //    normals.AddRange(child.GetNormals());
+            //}
 
             return normals.ToArray();
         }
@@ -501,7 +501,7 @@ namespace InSpaceNoOneSeesYourShadow.Objects3D.Shapes
         public override int NormalCount => _faces.Count * 3;
     }
 
-    internal class FaceVertex
+    public class FaceVertex
     {
         public Vector3 Position;
         public Vector3 Normal;
