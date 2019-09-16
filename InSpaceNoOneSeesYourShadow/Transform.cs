@@ -40,5 +40,10 @@ namespace InSpaceNoOneSeesYourShadow
                 child.Update(value);
             }
         }
+
+        public void AddChild(Transform transform)
+        {
+            Children.Add(transform);
+        }
     }
 }

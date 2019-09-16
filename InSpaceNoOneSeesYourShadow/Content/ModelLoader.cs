@@ -179,25 +179,24 @@ namespace InSpaceNoOneSeesYourShadow.Content
 
                     if (temp.Trim().Count(c => c == ' ') == 2) // Check if there's enough elements for a face
                     {
-                        var faceparts = temp.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        var faceParts = temp.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-                        int v1, v2, v3;
                         int t1, t2, t3;
                         int n1, n2, n3;
 
                         // Attempt to parse each part of the face
-                        var success = int.TryParse(faceparts[0].Split('/')[0], out v1);
-                        success |= int.TryParse(faceparts[1].Split('/')[0], out v2);
-                        success |= int.TryParse(faceparts[2].Split('/')[0], out v3);
+                        var success = int.TryParse(faceParts[0].Split('/')[0], out var v1);
+                        success |= int.TryParse(faceParts[1].Split('/')[0], out var v2);
+                        success |= int.TryParse(faceParts[2].Split('/')[0], out var v3);
 
-                        if (faceparts[0].Count(c => c == '/') >= 2)
+                        if (faceParts[0].Count(c => c == '/') >= 2)
                         {
-                            success |= int.TryParse(faceparts[0].Split('/')[1], out t1);
-                            success |= int.TryParse(faceparts[1].Split('/')[1], out t2);
-                            success |= int.TryParse(faceparts[2].Split('/')[1], out t3);
-                            success |= int.TryParse(faceparts[0].Split('/')[2], out n1);
-                            success |= int.TryParse(faceparts[1].Split('/')[2], out n2);
-                            success |= int.TryParse(faceparts[2].Split('/')[2], out n3);
+                            success |= int.TryParse(faceParts[0].Split('/')[1], out t1);
+                            success |= int.TryParse(faceParts[1].Split('/')[1], out t2);
+                            success |= int.TryParse(faceParts[2].Split('/')[1], out t3);
+                            success |= int.TryParse(faceParts[0].Split('/')[2], out n1);
+                            success |= int.TryParse(faceParts[1].Split('/')[2], out n2);
+                            success |= int.TryParse(faceParts[2].Split('/')[2], out n3);
                         }
                         else
                         {

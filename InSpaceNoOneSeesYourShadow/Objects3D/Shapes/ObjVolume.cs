@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -41,8 +42,6 @@ namespace InSpaceNoOneSeesYourShadow.Objects3D.Shapes
 
         public List<Vertex> VerticesStruct = new List<Vertex>();
 
-        public bool ShouldNotRender { get; set; }
-
         public int VAO;
         public int VBO;
         public int EBO;
@@ -55,7 +54,7 @@ namespace InSpaceNoOneSeesYourShadow.Objects3D.Shapes
             var texcoords = GetTextureCoords();
             var vertices = GetVertices();
 
-            for (int i = 0; i < vertices.Length; i++)
+            for (var i = 0; i < vertices.Length; i++)
             {
                 VerticesStruct.Add(new Vertex()
                 {
@@ -92,39 +91,13 @@ namespace InSpaceNoOneSeesYourShadow.Objects3D.Shapes
 
         }
 
-        public void CreateDictionary()
-        {
-            GL.GetProgram(VolumeShader.ProgramId, GetProgramParameterName.ActiveAttributes, out int length);
-            Console.WriteLine(length);
-            string names = "";
-            for (int i = 0; i < length; i++)
-            {
-                GL.GetActiveAttrib(VolumeShader.ProgramId, i, 20, out _, out _, out _, out var name);
-
-            }
-            Console.WriteLine(names);
-            GL.GetProgram(VolumeShader.ProgramId, GetProgramParameterName.ActiveUniforms, out int lengthU);
-            Console.WriteLine(lengthU);
-            string namesU = "";
-            for (int i = 0; i < lengthU; i++)
-            {
-                GL.GetActiveUniform(VolumeShader.ProgramId, i, 20, out _, out _, out _, out var name);
-                namesU += name + "\n";
-            }
-            Console.WriteLine(namesU);
-        }
-
-        public void Draw()
-        {
-
-        }
         /// <summary>
         /// Get vertices for this object
         /// </summary>
         /// <returns></returns>
         public override Vector3[] GetVertices()
         {
-            List<Vector3> vertices = new List<Vector3>();
+            var vertices = new List<Vector3>();
 
             foreach (var face in _faces)
             {
@@ -180,7 +153,7 @@ namespace InSpaceNoOneSeesYourShadow.Objects3D.Shapes
         /// <returns></returns>
         public override Vector2[] GetTextureCoords()
         {
-            List<Vector2> coords = new List<Vector2>();
+            var coords = new List<Vector2>();
 
             foreach (var face in _faces)
             {
@@ -231,10 +204,10 @@ namespace InSpaceNoOneSeesYourShadow.Objects3D.Shapes
         /// <returns>ObjVolume of loaded model</returns>
         public static ObjVolume LoadFromFile(string filename)
         {
-            ObjVolume obj = new ObjVolume();
+            var obj = new ObjVolume();
             try
             {
-                using (StreamReader reader = new StreamReader(new FileStream(filename, FileMode.Open, FileAccess.Read)))
+                using (var reader = new StreamReader(new FileStream(filename, FileMode.Open, FileAccess.Read)))
                 {
                     obj = LoadFromString(reader.ReadToEnd());
                 }
@@ -281,14 +254,14 @@ namespace InSpaceNoOneSeesYourShadow.Objects3D.Shapes
 
                     if (temp.Trim().Count(c => c == ' ') == 2) // Check if there's enough elements for a vertex
                     {
-                        var vertparts = temp.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        var vertParts = temp.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
                         // Attempt to parse each part of the vertice
-                        var style = System.Globalization.NumberStyles.Number;
-                        var culture = System.Globalization.CultureInfo.CreateSpecificCulture("en-GB");
-                        var success = float.TryParse(vertparts[0], style, culture, out vec.X);
-                        success |= float.TryParse(vertparts[1], style, culture, out vec.Y);
-                        success |= float.TryParse(vertparts[2], style, culture, out vec.Z);
+                        const NumberStyles style = NumberStyles.Number;
+                        var culture = CultureInfo.CreateSpecificCulture("en-GB");
+                        var success = float.TryParse(vertParts[0], style, culture, out vec.X);
+                        success |= float.TryParse(vertParts[1], style, culture, out vec.Y);
+                        success |= float.TryParse(vertParts[2], style, culture, out vec.Z);
 
                         // If any of the parses failed, report the error
                         if (!success)
@@ -312,13 +285,13 @@ namespace InSpaceNoOneSeesYourShadow.Objects3D.Shapes
 
                     if (temp.Trim().Count(c => c == ' ') > 0) // Check if there's enough elements for a vertex
                     {
-                        var texcoordparts = temp.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        var texCoordParts = temp.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
                         // Attempt to parse each part of the vertice
-                        var style = System.Globalization.NumberStyles.Number;
-                        var culture = System.Globalization.CultureInfo.CreateSpecificCulture("en-GB");
-                        var success = float.TryParse(texcoordparts[0], style, culture, out vec.X);
-                        success |= float.TryParse(texcoordparts[1], style, culture, out vec.Y);
+                        const NumberStyles style = NumberStyles.Number;
+                        var culture = CultureInfo.CreateSpecificCulture("en-GB");
+                        var success = float.TryParse(texCoordParts[0], style, culture, out vec.X);
+                        success |= float.TryParse(texCoordParts[1], style, culture, out vec.Y);
 
                         // If any of the parses failed, report the error
                         if (!success)
@@ -342,14 +315,14 @@ namespace InSpaceNoOneSeesYourShadow.Objects3D.Shapes
 
                     if (temp.Trim().Count(c => c == ' ') == 2) // Check if there's enough elements for a normal
                     {
-                        var vertparts = temp.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        var vertParts = temp.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-                        var style = System.Globalization.NumberStyles.Number;
-                        var culture = System.Globalization.CultureInfo.CreateSpecificCulture("en-GB");
+                        const NumberStyles style = NumberStyles.Number;
+                        var culture = CultureInfo.CreateSpecificCulture("en-GB");
                         // Attempt to parse each part of the vertice
-                        var success = float.TryParse(vertparts[0], style, culture, out vec.X);
-                        success |= float.TryParse(vertparts[1], style, culture, out vec.Y);
-                        success |= float.TryParse(vertparts[2], style, culture, out vec.Z);
+                        var success = float.TryParse(vertParts[0], style, culture, out vec.X);
+                        success |= float.TryParse(vertParts[1], style, culture, out vec.Y);
+                        success |= float.TryParse(vertParts[2], style, culture, out vec.Z);
 
                         // If any of the parses failed, report the error
                         if (!success)
@@ -373,25 +346,24 @@ namespace InSpaceNoOneSeesYourShadow.Objects3D.Shapes
 
                     if (temp.Trim().Count(c => c == ' ') == 2) // Check if there's enough elements for a face
                     {
-                        var faceparts = temp.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        var faceParts = temp.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-                        int v1, v2, v3;
                         int t1, t2, t3;
                         int n1, n2, n3;
 
                         // Attempt to parse each part of the face
-                        var success = int.TryParse(faceparts[0].Split('/')[0], out v1);
-                        success |= int.TryParse(faceparts[1].Split('/')[0], out v2);
-                        success |= int.TryParse(faceparts[2].Split('/')[0], out v3);
+                        var success = int.TryParse(faceParts[0].Split('/')[0], out var v1);
+                        success |= int.TryParse(faceParts[1].Split('/')[0], out var v2);
+                        success |= int.TryParse(faceParts[2].Split('/')[0], out var v3);
 
-                        if (faceparts[0].Count(c => c == '/') >= 2)
+                        if (faceParts[0].Count(c => c == '/') >= 2)
                         {
-                            success |= int.TryParse(faceparts[0].Split('/')[1], out t1);
-                            success |= int.TryParse(faceparts[1].Split('/')[1], out t2);
-                            success |= int.TryParse(faceparts[2].Split('/')[1], out t3);
-                            success |= int.TryParse(faceparts[0].Split('/')[2], out n1);
-                            success |= int.TryParse(faceparts[1].Split('/')[2], out n2);
-                            success |= int.TryParse(faceparts[2].Split('/')[2], out n3);
+                            success |= int.TryParse(faceParts[0].Split('/')[1], out t1);
+                            success |= int.TryParse(faceParts[1].Split('/')[1], out t2);
+                            success |= int.TryParse(faceParts[2].Split('/')[1], out t3);
+                            success |= int.TryParse(faceParts[0].Split('/')[2], out n1);
+                            success |= int.TryParse(faceParts[1].Split('/')[2], out n2);
+                            success |= int.TryParse(faceParts[2].Split('/')[2], out n3);
                         }
                         else
                         {
@@ -481,7 +453,7 @@ namespace InSpaceNoOneSeesYourShadow.Objects3D.Shapes
                 return base.GetNormals();
             }
 
-            List<Vector3> normals = new List<Vector3>();
+            var normals = new List<Vector3>();
 
             foreach (var face in _faces)
             {
@@ -501,7 +473,7 @@ namespace InSpaceNoOneSeesYourShadow.Objects3D.Shapes
         public override int NormalCount => _faces.Count * 3;
     }
 
-    public class FaceVertex
+    public struct FaceVertex
     {
         public Vector3 Position;
         public Vector3 Normal;

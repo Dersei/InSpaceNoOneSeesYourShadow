@@ -43,7 +43,6 @@ namespace InSpaceNoOneSeesYourShadow.Logic
             }
 
             _oldTime = DateTime.Now;
-            _view = Camera.GetViewMatrix();
             GameManager.PlayerPosition = _playerShip.Transform.Position;
         }
 

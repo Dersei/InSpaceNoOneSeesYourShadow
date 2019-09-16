@@ -16,12 +16,12 @@ namespace InSpaceNoOneSeesYourShadow.Helpers.Cameras
         /// <returns>A view matrix to look in the camera's direction</returns>
         public Matrix4 GetViewMatrix()
         {
-            Vector3 lookAt = new Vector3
-            {
-                X = (float)(Math.Sin(Orientation.X) * Math.Cos(Orientation.Y)),
-                Y = (float)Math.Sin(Orientation.Y),
-                Z = (float)(Math.Cos(Orientation.X) * Math.Cos(Orientation.Y))
-            };
+            //Vector3 lookAt = new Vector3
+            //{
+            //    X = (float)(Math.Sin(Orientation.X) * Math.Cos(Orientation.Y)),
+            //    Y = (float)Math.Sin(Orientation.Y),
+            //    Z = (float)(Math.Cos(Orientation.X) * Math.Cos(Orientation.Y))
+            //};
 
 
             return Matrix4.LookAt(Position, Vector3.Zero, Vector3.UnitY);
@@ -56,8 +56,8 @@ namespace InSpaceNoOneSeesYourShadow.Helpers.Cameras
         /// <param name="y"></param>
         public void AddRotation(float x, float y)
         {
-            x = x * MouseSensitivity;
-            y = y * MouseSensitivity;
+            x *= MouseSensitivity;
+            y *= MouseSensitivity;
 
             Orientation.X = (Orientation.X + x) % ((float)Math.PI * 2.0f);
             Orientation.Y = Math.Max(Math.Min(Orientation.Y + y, (float)Math.PI / 2.0f - 0.1f), (float)-Math.PI / 2.0f + 0.1f);

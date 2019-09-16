@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using InSpaceNoOneSeesYourShadow.Objects3D;
@@ -30,12 +31,12 @@ namespace InSpaceNoOneSeesYourShadow.Content
                 return result;
             }
 
-            Dictionary<string, Material> mats = new Dictionary<string, Material>();
+            var mats = new Dictionary<string, Material>();
 
             try
             {
-                string currentmat = "";
-                using (StreamReader reader = new StreamReader(new FileStream(filename, FileMode.Open, FileAccess.Read)))
+                var currentmat = "";
+                using (var reader = new StreamReader(new FileStream(filename, FileMode.Open, FileAccess.Read)))
                 {
                     string currentLine;
 
@@ -54,10 +55,9 @@ namespace InSpaceNoOneSeesYourShadow.Content
                         {
                             if (currentmat.Length > 0)
                             {
-                                Material newMat = new Material();
-                                string newMatName = "";
+                                var newMat = new Material();
 
-                                newMat = LoadFromString(currentmat, out newMatName);
+                                newMat = LoadFromString(currentmat, out var newMatName);
 
                                 mats.Add(newMatName, newMat);
                             }
@@ -70,10 +70,9 @@ namespace InSpaceNoOneSeesYourShadow.Content
                 // Add final material
                 if (currentmat.Count(c => c == '\n') > 0)
                 {
-                    Material newMat = new Material();
-                    string newMatName = "";
+                    var newMat = new Material();
 
-                    newMat = LoadFromString(currentmat, out newMatName);
+                    newMat = LoadFromString(currentmat, out var newMatName);
 
                     mats.Add(newMatName, newMat);
                 }
@@ -94,10 +93,10 @@ namespace InSpaceNoOneSeesYourShadow.Content
 
         public static Material LoadFromString(string mat, out string name)
         {
-            Material output = new Material();
+            var output = new Material();
             name = "";
 
-            List<string> lines = mat.Split('\n').ToList();
+            var lines = mat.Split('\n').ToList();
 
             // Skip until the material definition starts
             lines = lines.SkipWhile(s => !s.StartsWith("newmtl ")).ToList();
@@ -113,7 +112,7 @@ namespace InSpaceNoOneSeesYourShadow.Content
             lines = lines.Select(s => s.Trim()).ToList();
 
             // Read material properties
-            foreach (string line in lines)
+            foreach (var line in lines)
             {
                 // Skip comments and blank lines
                 if (line.Length < 3 || line.StartsWith("//") || line.StartsWith("#"))
@@ -124,7 +123,7 @@ namespace InSpaceNoOneSeesYourShadow.Content
                 // Parse ambient color
                 if (line.StartsWith("Ka"))
                 {
-                    string[] colorparts = line.Substring(3).Split(' ');
+                    var colorparts = line.Substring(3).Split(' ');
 
                     // Check that all vector fields are present
                     if (colorparts.Length < 3)
@@ -132,11 +131,11 @@ namespace InSpaceNoOneSeesYourShadow.Content
                         throw new ArgumentException("Invalid color data");
                     }
 
-                    Vector3 vec = new Vector3();
-                    var style = System.Globalization.NumberStyles.Number;
-                    var culture = System.Globalization.CultureInfo.CreateSpecificCulture("en-GB");
+                    var vec = new Vector3();
+                    var style = NumberStyles.Number;
+                    var culture = CultureInfo.CreateSpecificCulture("en-GB");
                     // Attempt to parse each part of the color
-                    bool success = float.TryParse(colorparts[0], style, culture, out vec.X);
+                    var success = float.TryParse(colorparts[0], style, culture, out vec.X);
                     success |= float.TryParse(colorparts[1], style, culture, out vec.Y);
                     success |= float.TryParse(colorparts[2], style, culture, out vec.Z);
 
@@ -152,7 +151,7 @@ namespace InSpaceNoOneSeesYourShadow.Content
                 // Parse diffuse color
                 if (line.StartsWith("Kd"))
                 {
-                    string[] colorparts = line.Substring(3).Split(' ');
+                    var colorparts = line.Substring(3).Split(' ');
 
                     // Check that all vector fields are present
                     if (colorparts.Length < 3)
@@ -160,12 +159,12 @@ namespace InSpaceNoOneSeesYourShadow.Content
                         throw new ArgumentException("Invalid color data");
                     }
 
-                    Vector3 vec = new Vector3();
+                    var vec = new Vector3();
 
                     // Attempt to parse each part of the color
-                    var style = System.Globalization.NumberStyles.Number;
-                    var culture = System.Globalization.CultureInfo.CreateSpecificCulture("en-GB");
-                    bool success = float.TryParse(colorparts[0], style, culture, out vec.X);
+                    var style = NumberStyles.Number;
+                    var culture = CultureInfo.CreateSpecificCulture("en-GB");
+                    var success = float.TryParse(colorparts[0], style, culture, out vec.X);
                     success |= float.TryParse(colorparts[1], style, culture, out vec.Y);
                     success |= float.TryParse(colorparts[2], style, culture, out vec.Z);
                     output.DiffuseColor = new Vector3(float.Parse(colorparts[0], style, culture), float.Parse(colorparts[1], style, culture), float.Parse(colorparts[2], style, culture));
@@ -180,7 +179,7 @@ namespace InSpaceNoOneSeesYourShadow.Content
                 // Parse specular color
                 if (line.StartsWith("Ks"))
                 {
-                    string[] colorparts = line.Substring(3).Split(' ');
+                    var colorparts = line.Substring(3).Split(' ');
 
                     // Check that all vector fields are present
                     if (colorparts.Length < 3)
@@ -188,12 +187,12 @@ namespace InSpaceNoOneSeesYourShadow.Content
                         throw new ArgumentException("Invalid color data");
                     }
 
-                    Vector3 vec = new Vector3();
+                    var vec = new Vector3();
 
                     // Attempt to parse each part of the color
-                    var style = System.Globalization.NumberStyles.Number;
-                    var culture = System.Globalization.CultureInfo.CreateSpecificCulture("en-GB");
-                    bool success = float.TryParse(colorparts[0], style, culture, out vec.X);
+                    var style = NumberStyles.Number;
+                    var culture = CultureInfo.CreateSpecificCulture("en-GB");
+                    var success = float.TryParse(colorparts[0], style, culture, out vec.X);
                     success |= float.TryParse(colorparts[1], style, culture, out vec.Y);
                     success |= float.TryParse(colorparts[2], style, culture, out vec.Z);
 
@@ -210,10 +209,9 @@ namespace InSpaceNoOneSeesYourShadow.Content
                 if (line.StartsWith("Ns"))
                 {
                     // Attempt to parse each part of the color
-                    float exponent = 0.0f;
-                    var style = System.Globalization.NumberStyles.Number;
-                    var culture = System.Globalization.CultureInfo.CreateSpecificCulture("en-GB");
-                    bool success = float.TryParse(line.Substring(3), style, culture, out exponent);
+                    const NumberStyles style = NumberStyles.Number;
+                    var culture = CultureInfo.CreateSpecificCulture("en-GB");
+                    var success = float.TryParse(line.Substring(3), style, culture, out var exponent);
 
                     output.SpecularExponent = exponent;
 

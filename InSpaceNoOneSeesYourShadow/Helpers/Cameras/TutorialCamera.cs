@@ -56,8 +56,8 @@ namespace InSpaceNoOneSeesYourShadow.Helpers.Cameras
         /// <param name="y"></param>
         public void AddRotation(float x, float y)
         {
-            x = x * MouseSensitivity;
-            y = y * MouseSensitivity;
+            x *= MouseSensitivity;
+            y *= MouseSensitivity;
 
             Orientation.X = (Orientation.X + x) % ((float)Math.PI * 2.0f);
             Orientation.Y = Math.Max(Math.Min(Orientation.Y + y, (float)Math.PI / 2.0f - 0.1f), (float)-Math.PI / 2.0f + 0.1f);
