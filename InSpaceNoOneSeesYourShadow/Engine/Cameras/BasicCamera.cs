@@ -30,7 +30,7 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Cameras
         {
             var offset = new Vector3();
 
-            var forward = new Vector3((float)Math.Sin((float)Orientation.X), 0, (float)Math.Cos((float)Orientation.X));
+            var forward = new Vector3((float)Math.Sin(Orientation.X), 0, (float)Math.Cos(Orientation.X));
             var right = new Vector3(-forward.Z, 0, forward.X);
 
             offset += x * right;

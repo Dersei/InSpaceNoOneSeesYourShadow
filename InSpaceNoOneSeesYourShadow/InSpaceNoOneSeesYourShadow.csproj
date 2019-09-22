@@ -89,9 +89,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Engine\Basic.cs" />
     <Compile Include="Engine\ContentManagement\MaterialLoader.cs" />
     <Compile Include="Engine\ContentManagement\ModelLoader.cs" />
     <Compile Include="Engine\ContentManagement\Texture2DLoader.cs" />
+    <Compile Include="Engine\Extensions\QuaternionExtensions.cs" />
+    <Compile Include="Engine\Extensions\RandomExtensions.cs" />
+    <Compile Include="Engine\Extensions\VariousExtensions.cs" />
     <Compile Include="Engine\Interfaces\ICloneable.cs" />
     <Compile Include="GameManager.cs" />
     <Compile Include="Engine\Core\GameObject.cs" />
@@ -100,8 +104,7 @@
     <Compile Include="Engine\Helpers\Skybox.cs" />
     <Compile Include="Logic\Game.cs" />
     <Compile Include="Engine\Objects3D\Material.cs" />
-    <Compile Include="Engine\Objects3D\Shapes\ObjVolume.cs" />
-    <Compile Include="Engine\Objects3D\Volume.cs" />
+    <Compile Include="Engine\Objects3D\Shapes\Model.cs" />
     <Compile Include="Engine\Cameras\BasicCamera.cs" />
     <Compile Include="Engine\Cameras\GameCamera.cs" />
     <Compile Include="Engine\Helpers\Light.cs" />

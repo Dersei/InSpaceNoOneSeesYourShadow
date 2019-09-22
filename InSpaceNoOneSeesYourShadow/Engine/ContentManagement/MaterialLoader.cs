@@ -100,7 +100,6 @@ namespace InSpaceNoOneSeesYourShadow.Engine.ContentManagement
             var success = float.TryParse(colorParts[0], style, culture, out vector.X);
             success |= float.TryParse(colorParts[1], style, culture, out vector.Y);
             success |= float.TryParse(colorParts[2], style, culture, out vector.Z);
-            //output.AmbientColor = new Vector3(float.Parse(colorParts[0], style, culture), float.Parse(colorParts[1], style, culture), float.Parse(colorParts[2], style, culture));
             // If any of the parses failed, report the error
             if (!success)
             {

@@ -6,15 +6,26 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Core
 {
     public class Transform
     {
-        public Vector3 Position { get; set; } = Vector3.Zero;
-        public Vector3 Rotation { get; set; } = Vector3.Zero;
-        public Vector3 Scale { get; set; } = Vector3.Zero;
+        public Vector3 Position { get; set; }
+        public Vector3 Rotation { get; set; }
+        public Vector3 Scale { get; set; }
 
-        public Matrix4 ModelMatrix => Matrix4.CreateScale(Scale) *
-                                      Matrix4.CreateRotationX(Rotation.X) *
-                                      Matrix4.CreateRotationY(Rotation.Y) *
-                                      Matrix4.CreateRotationZ(Rotation.Z) *
-                                      Matrix4.CreateTranslation(Position);
+        public Matrix4 WorldMatrix => CreateWorldMatrix();
+
+        private Matrix4 CreateWorldMatrix()
+        {
+            var matrix = Matrix4.Identity;
+            matrix *= Matrix4.CreateScale(Scale);
+            matrix *= Matrix4.CreateRotationX(Rotation.X) *
+                      Matrix4.CreateRotationY(Rotation.Y) *
+                      Matrix4.CreateRotationZ(Rotation.Z);
+            matrix *= Matrix4.CreateTranslation(Position);
+            if (Parent != null)
+            {
+                matrix *= Parent.WorldMatrix;
+            }
+            return matrix;
+        }
 
         public Transform Parent;
 
@@ -38,15 +49,17 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Core
             Position = PositionModifier(value);
             Rotation = RotationModifier(value);
             Scale = ScaleModifier(value);
-            foreach (var child in Children)
-            {
-                child.Update(value);
-            }
+            //foreach (var child in Children)
+            //{
+            //    child.Update(value);
+            //}
         }
 
         public void AddChild(Transform transform)
         {
-            Children.Add(transform);
+            throw new NotSupportedException();
+            //Children.Add(transform);
+            //transform.Parent = this;
         }
     }
 }

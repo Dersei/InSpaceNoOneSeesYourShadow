@@ -11,9 +11,9 @@ namespace InSpaceNoOneSeesYourShadow.Engine.ContentManagement
 {
     internal static class ModelLoader
     {
-        private static readonly Dictionary<string, ObjVolume> Cache = new Dictionary<string, ObjVolume>();
+        private static readonly Dictionary<string, Model> Cache = new Dictionary<string, Model>();
 
-        private static bool CheckIfCached(string name, out ObjVolume obj)
+        private static bool CheckIfCached(string name, out Model obj)
         {
             if (Cache.ContainsKey(name))
             {
@@ -28,15 +28,15 @@ namespace InSpaceNoOneSeesYourShadow.Engine.ContentManagement
         /// Loads a model from a file.
         /// </summary>
         /// <param name="filename">File to load model from</param>
-        /// <returns>ObjVolume of loaded model</returns>
-        public static ObjVolume LoadFromFile(string filename)
+        /// <returns>Model of loaded model</returns>
+        public static Model LoadFromFile(string filename)
         {
             if (CheckIfCached(filename, out var result))
             {
                 return result;
             }
 
-            var obj = new ObjVolume();
+            var obj = new Model();
             try
             {
                 using (var reader = new StreamReader(new FileStream(filename, FileMode.Open, FileAccess.Read)))
@@ -59,7 +59,7 @@ namespace InSpaceNoOneSeesYourShadow.Engine.ContentManagement
         }
 
 
-        private static ObjVolume LoadFromString(string obj)
+        private static Model LoadFromString(string obj)
         {
             const NumberStyles style = NumberStyles.Number;
             var culture = CultureInfo.CreateSpecificCulture("en-GB");
@@ -243,14 +243,14 @@ namespace InSpaceNoOneSeesYourShadow.Engine.ContentManagement
                 }
             }
 
-            // Create the ObjVolume
-            var vol = new ObjVolume();
+            // Create the Model
+            var vol = new Model();
 
             foreach (var face in faces)
             {
-                var v1 = new FaceVertex(vertices[face.Item1.Vertex], normals[face.Item1.Normal], texs[face.Item1.TexCoords]);
-                var v2 = new FaceVertex(vertices[face.Item2.Vertex], normals[face.Item2.Normal], texs[face.Item2.TexCoords]);
-                var v3 = new FaceVertex(vertices[face.Item3.Vertex], normals[face.Item3.Normal], texs[face.Item3.TexCoords]);
+                var v1 = new Model.FaceVertex(vertices[face.Item1.Vertex], normals[face.Item1.Normal], texs[face.Item1.TexCoords]);
+                var v2 = new Model.FaceVertex(vertices[face.Item2.Vertex], normals[face.Item2.Normal], texs[face.Item2.TexCoords]);
+                var v3 = new Model.FaceVertex(vertices[face.Item3.Vertex], normals[face.Item3.Normal], texs[face.Item3.TexCoords]);
 
                 vol.Faces.Add((v1, v2, v3));
             }

@@ -8,10 +8,10 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Core
     public class GameObject
     {
         public Transform Transform;
-        public ObjVolume Model;
+        public Model Model;
         public bool ShouldNotRender;
 
-        public GameObject(Vector3 position, Vector3 rotation, Vector3 scale, ObjVolume model)
+        public GameObject(Vector3 position, Vector3 rotation, Vector3 scale, Model model)
         {
             Transform = new Transform(position, rotation, scale);
             Model = model;
@@ -20,9 +20,6 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Core
         public void Update(float value)
         {
             if (ShouldNotRender) return;
-            Model.CalculateModelMatrix(Transform);
-            //Model.UpdateMatrices(GameManager.Camera.GetViewMatrix() * Matrix4.CreateOrthographic(100, 100, 1.0f, 1000.0f));
-
             Transform.Update(value);
         }
 
@@ -33,12 +30,12 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Core
             GL.UseProgram(Model.VolumeShader.ProgramId);
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, Model.TextureId);
-            Model.VolumeShader.SetUniform("modelview", Transform.ModelMatrix * GameManager.Camera.ViewProjectionMatrix);
+            Model.VolumeShader.SetUniform("modelview", Transform.WorldMatrix * GameManager.Camera.ViewProjectionMatrix);
             Model.VolumeShader.SetAttribute("vColor", Model.GetColorData());
             // volume.VolumeShader.SetUniform("maintexture", volume.TextureId);
             Model.VolumeShader.SetUniform("view", GameManager.Camera.ViewMatrix);
             Model.VolumeShader.SetUniform("camPos", GameManager.Camera.Position);
-            Model.VolumeShader.SetUniform("model", Transform.ModelMatrix);
+            Model.VolumeShader.SetUniform("model", Transform.WorldMatrix);
             Model.VolumeShader.SetUniform("material_ambient", Model.Material.AmbientColor);
             Model.VolumeShader.SetUniform("material_diffuse", Model.Material.DiffuseColor);
             Model.VolumeShader.SetUniform("material_specular", Model.Material.SpecularColor);
@@ -79,11 +76,6 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Core
             GL.DrawElements(PrimitiveType.Triangles, Model.IndicesCount, DrawElementsType.UnsignedInt, 0);
             GL.BindVertexArray(0);
 
-            //foreach (var child in volume.Children)
-            //{
-            //    GL.PolygonMode(MaterialFace.FrontAndBack, _polygonMode);
-            //    DrawVolume(child, indexAt);
-            //}
             Model.VolumeShader.DisableVertexAttributesArrays();
         }
 

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using InSpaceNoOneSeesYourShadow.Engine;
 using InSpaceNoOneSeesYourShadow.Engine.Cameras;
 using InSpaceNoOneSeesYourShadow.Engine.ContentManagement;
 using InSpaceNoOneSeesYourShadow.Engine.Core;
+using InSpaceNoOneSeesYourShadow.Engine.Extensions;
 using InSpaceNoOneSeesYourShadow.Engine.Helpers;
 using InSpaceNoOneSeesYourShadow.Engine.Objects3D;
 using InSpaceNoOneSeesYourShadow.Engine.Objects3D.Shapes;
@@ -21,7 +23,6 @@ namespace InSpaceNoOneSeesYourShadow.Logic
         private readonly Light _spotLight1 = new Light(new Vector3(1, 5, 1), new Vector3(1f, 1f, 1f));
         private readonly Light _spotLight2 = new Light(new Vector3(5, 10, 0), new Vector3(0.8f, 0.8f, 0f));
         private readonly Light _pointLight = new Light(new Vector3(1, 5, 1), new Vector3(1f, 0f, 0f));
-        private readonly Random _random = new Random();
         private readonly List<GameObject> _objects = new List<GameObject>();
         private readonly List<GameObject> _enemies = new List<GameObject>();
         private readonly List<GameObject> _projectiles = new List<GameObject>();
@@ -53,7 +54,6 @@ namespace InSpaceNoOneSeesYourShadow.Logic
         {
             CheckCollisionsWithEnemy();
             CheckCollisionsWithPlayer();
-
             SpawnEnemyProjectiles();
             foreach (var v in _objects)
             {
@@ -65,12 +65,12 @@ namespace InSpaceNoOneSeesYourShadow.Logic
 
         public void SpawnEnemyProjectiles()
         {
-            var chance = _random.Next(0, 100);
+            var chance = Basic.Random.Next(0, 100);
             if (chance > 5 || _activeEnemyProjectiles.Count > 8)
             {
                 return;
             }
-            var temp = _enemies[_random.Next(0, _enemies.Count)];
+            var temp = _enemies.RandomItem();
             var arrow = _cachedEnemyProjectiles.Except(_activeEnemyProjectiles).FirstOrDefault();
             if (arrow is null) return;
             arrow.Transform.Position = temp.Transform.Position + new Vector3(0,1,0);
@@ -172,7 +172,7 @@ namespace InSpaceNoOneSeesYourShadow.Logic
             cubePlane.Model.Material = new Material(new Vector3(0.5f), new Vector3(1), new Vector3(0.2f));
             //cubePlane.Transform.PositionModifier = f => new Vector3(2 * (float)Math.Sin(MathHelper.DegreesToRadians(f * 80 % 360)), 0f, 2 * (float)Math.Cos(MathHelper.DegreesToRadians(f * 80 % 360)));
             cubePlane.Transform.ScaleModifier = f => new Vector3(50f, 0.1f, 50f);
-            cubePlane.Model.PbrValues = new ObjVolume.PBRValues
+            cubePlane.Model.PbrValues = new Model.PBRValues
             {
                 AO = 0.5f,
                 Metallic = 0.5f,
@@ -183,6 +183,22 @@ namespace InSpaceNoOneSeesYourShadow.Logic
             cubePlane.Model.VolumeShader = _shaders[_activeShader];
             cubePlane.Model.Bind();
             _objects.Add(cubePlane);
+
+            GameObject playerShip = new GameObject(new Vector3(0f, -40f, -10f), new Vector3(-MathHelper.PiOver2, 0, 0), new Vector3(0.05f, 0.05f, 0.05f), ModelLoader.LoadFromFile("_Resources/Models/ship2.obj"));
+            playerShip.Model.Material = new Material(new Vector3(1), new Vector3(1), new Vector3(0.8f));
+            playerShip.Model.TextureId = _textures["ship2_diffuse.bmp"];
+            playerShip.Model.PbrValues = new Model.PBRValues
+            {
+                AO = 1f,
+                Metallic = 0.5f,
+                ReflectionStrength = 0f,
+                Refraction = 0f,
+                Roughness = 0f
+            };
+            playerShip.Model.VolumeShader = _shaders["light"];
+            playerShip.Model.Bind();
+            _playerShip = playerShip;
+            _objects.Add(playerShip);
 
             for (int j = 0; j < 3; j++)
             {
@@ -196,11 +212,11 @@ namespace InSpaceNoOneSeesYourShadow.Logic
                     ship.Model.Material = new Material(new Vector3(0.5f), new Vector3(1), new Vector3(0.8f));
                     //cubePlane.PositionModifier = f => new Vector3(2 * (float)Math.Sin(MathHelper.DegreesToRadians(f * 80 % 360)), 0f, 2 * (float)Math.Cos(MathHelper.DegreesToRadians(f * 80 % 360)));
                     ship.Transform.ScaleModifier = f => new Vector3(0.005f, 0.005f, 0.005f);
-                    ship.Model.PbrValues = new ObjVolume.PBRValues
+                    ship.Model.PbrValues = new Model.PBRValues
                     {
                         AO = 0.5f,
                         Metallic = 0.5f,
-                        ReflectionStrength = (float)_random.NextDouble(),
+                        ReflectionStrength = (float)Basic.Random.NextDouble(),
                         Refraction = 0f,
                         Roughness = 0.5f
                     };
@@ -210,22 +226,6 @@ namespace InSpaceNoOneSeesYourShadow.Logic
                     _enemies.Add(ship);
                 }
             }
-
-            GameObject playerShip = new GameObject(new Vector3(0f, -40f, -10f), new Vector3(-MathHelper.PiOver2, 0, 0), new Vector3(0.05f, 0.05f, 0.05f), ModelLoader.LoadFromFile("_Resources/Models/ship2.obj"));
-            playerShip.Model.Material = new Material(new Vector3(0.5f), new Vector3(1), new Vector3(0.8f));
-            playerShip.Model.TextureId = _textures["ship2_diffuse.bmp"];
-            playerShip.Model.PbrValues = new ObjVolume.PBRValues
-            {
-                AO = 1f,
-                Metallic = 0.5f,
-                ReflectionStrength = 0f,
-                Refraction = 0f,
-                Roughness = 0f
-            };
-            playerShip.Model.VolumeShader = _shaders["light"];
-            playerShip.Model.Bind();
-            _playerShip = playerShip;
-            _objects.Add(playerShip);
 
             for (var i = 0; i < 8; i++)
             {
