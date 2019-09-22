@@ -1,10 +1,9 @@
-﻿using InSpaceNoOneSeesYourShadow.Objects3D.Shapes;
+﻿using System;
+using InSpaceNoOneSeesYourShadow.Engine.Objects3D.Shapes;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using OpenTK.Input;
-using System;
 
-namespace InSpaceNoOneSeesYourShadow
+namespace InSpaceNoOneSeesYourShadow.Engine.Core
 {
     public class GameObject
     {
@@ -16,14 +15,13 @@ namespace InSpaceNoOneSeesYourShadow
         {
             Transform = new Transform(position, rotation, scale);
             Model = model;
-            model.GameObject = this;
         }
 
         public void Update(float value)
         {
             if (ShouldNotRender) return;
-            Model.CalculateModelMatrix();
-            Model.UpdateMatrices(GameManager.Camera.GetViewMatrix() * Matrix4.CreateOrthographic(100, 100, 1.0f, 1000.0f));
+            Model.CalculateModelMatrix(Transform);
+            //Model.UpdateMatrices(GameManager.Camera.GetViewMatrix() * Matrix4.CreateOrthographic(100, 100, 1.0f, 1000.0f));
 
             Transform.Update(value);
         }
@@ -35,13 +33,13 @@ namespace InSpaceNoOneSeesYourShadow
             GL.UseProgram(Model.VolumeShader.ProgramId);
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, Model.TextureId);
-            Model.VolumeShader.SetUniform("modelview", Model.ModelViewProjectionMatrix);
+            Model.VolumeShader.SetUniform("modelview", Transform.ModelMatrix * GameManager.Camera.ViewProjectionMatrix);
             Model.VolumeShader.SetAttribute("vColor", Model.GetColorData());
             // volume.VolumeShader.SetUniform("maintexture", volume.TextureId);
-            Model.VolumeShader.SetUniform("view", GameManager.Camera.GetViewMatrix());
+            Model.VolumeShader.SetUniform("view", GameManager.Camera.ViewMatrix);
             Model.VolumeShader.SetUniform("camPos", GameManager.Camera.Position);
-            Model.VolumeShader.SetUniform("model", Model.ModelMatrix);
-            Model.VolumeShader.SetUniform("material_ambient", Model.Material.DiffuseColor);
+            Model.VolumeShader.SetUniform("model", Transform.ModelMatrix);
+            Model.VolumeShader.SetUniform("material_ambient", Model.Material.AmbientColor);
             Model.VolumeShader.SetUniform("material_diffuse", Model.Material.DiffuseColor);
             Model.VolumeShader.SetUniform("material_specular", Model.Material.SpecularColor);
             Model.VolumeShader.SetUniform("material_specExponent", Model.Material.SpecularExponent);
@@ -61,8 +59,8 @@ namespace InSpaceNoOneSeesYourShadow
                 Model.VolumeShader.SetUniform("dirLight.direction", GameManager.DirectionalLight.Position);
                 Model.VolumeShader.SetUniform("dirLight.color", GameManager.DirectionalLight.Color);
                 Model.VolumeShader.SetUniform("dirLight.lightStrength", 10f);
-                Model.VolumeShader.SetUniform("pointLight.position", GameManager.Pointlight.Position);
-                Model.VolumeShader.SetUniform("pointLight.color", GameManager.Pointlight.Color);
+                Model.VolumeShader.SetUniform("pointLight.position", GameManager.PointLight.Position);
+                Model.VolumeShader.SetUniform("pointLight.color", GameManager.PointLight.Color);
                 Model.VolumeShader.SetUniform("spotLight[0].cutOff", (float)Math.Cos(MathHelper.RadiansToDegrees(10f)));
                 Model.VolumeShader.SetUniform("spotLight[0].outerCutOff", (float)Math.Cos(MathHelper.RadiansToDegrees(80f)));
                 //volume.VolumeShader.SetVec3("spotLight[0].color", _spotLight1.Color);

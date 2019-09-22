@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
-using InSpaceNoOneSeesYourShadow.Objects3D.Shapes;
+using InSpaceNoOneSeesYourShadow.Engine.Objects3D.Shapes;
+using InSpaceNoOneSeesYourShadow.Engine.Utils;
 using OpenTK;
 
-namespace InSpaceNoOneSeesYourShadow.Content
+namespace InSpaceNoOneSeesYourShadow.Engine.ContentManagement
 {
     internal static class ModelLoader
     {
@@ -34,21 +36,21 @@ namespace InSpaceNoOneSeesYourShadow.Content
                 return result;
             }
 
-            ObjVolume obj = new ObjVolume();
+            var obj = new ObjVolume();
             try
             {
-                using (StreamReader reader = new StreamReader(new FileStream(filename, FileMode.Open, FileAccess.Read)))
+                using (var reader = new StreamReader(new FileStream(filename, FileMode.Open, FileAccess.Read)))
                 {
                     obj = LoadFromString(reader.ReadToEnd());
                 }
             }
             catch (FileNotFoundException)
             {
-                Console.WriteLine($@"File not found: {filename}");
+                Logger.LogConsole($@"File not found: {filename}");
             }
             catch (Exception)
             {
-                Console.WriteLine($@"Error loading file: {filename}");
+                Logger.LogConsole($@"Error loading file: {filename}");
             }
 
             Cache.Add(filename, obj);
@@ -59,6 +61,8 @@ namespace InSpaceNoOneSeesYourShadow.Content
 
         private static ObjVolume LoadFromString(string obj)
         {
+            const NumberStyles style = NumberStyles.Number;
+            var culture = CultureInfo.CreateSpecificCulture("en-GB");
             // Separate lines from the file
             var lines = new List<string>(obj.Split('\n'));
 
@@ -66,14 +70,12 @@ namespace InSpaceNoOneSeesYourShadow.Content
             var vertices = new List<Vector3>();
             var normals = new List<Vector3>();
             var texs = new List<Vector2>();
-            var faces = new List<Tuple<ObjVolume.TempVertex, ObjVolume.TempVertex, ObjVolume.TempVertex>>();
+            var faces = new List<(TempVertex, TempVertex, TempVertex)>();
 
             // Base values
             vertices.Add(new Vector3());
             texs.Add(new Vector2());
             normals.Add(new Vector3());
-
-            var currentIndex = 0;
 
             // Read file line by line
             foreach (var line in lines)
@@ -90,8 +92,6 @@ namespace InSpaceNoOneSeesYourShadow.Content
                         var vertparts = temp.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
                         // Attempt to parse each part of the vertice
-                        var style = System.Globalization.NumberStyles.Number;
-                        var culture = System.Globalization.CultureInfo.CreateSpecificCulture("en-GB");
                         var success = float.TryParse(vertparts[0], style, culture, out vec.X);
                         success |= float.TryParse(vertparts[1], style, culture, out vec.Y);
                         success |= float.TryParse(vertparts[2], style, culture, out vec.Z);
@@ -99,12 +99,12 @@ namespace InSpaceNoOneSeesYourShadow.Content
                         // If any of the parses failed, report the error
                         if (!success)
                         {
-                            Console.WriteLine("Error parsing vertex: {0}", line);
+                            Logger.LogConsole($"Error parsing vertex: {line}");
                         }
                     }
                     else
                     {
-                        Console.WriteLine("Error parsing vertex: {0}", line);
+                        Logger.LogConsole($"Error parsing vertex: {line}");
                     }
 
                     vertices.Add(vec);
@@ -121,20 +121,18 @@ namespace InSpaceNoOneSeesYourShadow.Content
                         var texcoordparts = temp.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
                         // Attempt to parse each part of the vertice
-                        var style = System.Globalization.NumberStyles.Number;
-                        var culture = System.Globalization.CultureInfo.CreateSpecificCulture("en-GB");
                         var success = float.TryParse(texcoordparts[0], style, culture, out vec.X);
                         success |= float.TryParse(texcoordparts[1], style, culture, out vec.Y);
 
                         // If any of the parses failed, report the error
                         if (!success)
                         {
-                            Console.WriteLine("Error parsing texture coordinate: {0}", line);
+                            Logger.LogConsole($"Error parsing texture coordinate: {line}");
                         }
                     }
                     else
                     {
-                        Console.WriteLine("Error parsing texture coordinate: {0}", line);
+                        Logger.LogConsole($"Error parsing texture coordinate: {line}");
                     }
 
                     texs.Add(vec);
@@ -150,8 +148,6 @@ namespace InSpaceNoOneSeesYourShadow.Content
                     {
                         var vertparts = temp.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-                        var style = System.Globalization.NumberStyles.Number;
-                        var culture = System.Globalization.CultureInfo.CreateSpecificCulture("en-GB");
                         // Attempt to parse each part of the vertice
                         var success = float.TryParse(vertparts[0], style, culture, out vec.X);
                         success |= float.TryParse(vertparts[1], style, culture, out vec.Y);
@@ -160,12 +156,12 @@ namespace InSpaceNoOneSeesYourShadow.Content
                         // If any of the parses failed, report the error
                         if (!success)
                         {
-                            Console.WriteLine("Error parsing normal: {0}", line);
+                            Logger.LogConsole($"Error parsing normal: {line}");
                         }
                     }
                     else
                     {
-                        Console.WriteLine("Error parsing normal: {0}", line);
+                        Logger.LogConsole($"Error parsing normal: {line}");
                     }
 
                     normals.Add(vec);
@@ -174,8 +170,6 @@ namespace InSpaceNoOneSeesYourShadow.Content
                 {
                     // Cut off beginning of line
                     var temp = line.Substring(2);
-
-                    var face = new Tuple<ObjVolume.TempVertex, ObjVolume.TempVertex, ObjVolume.TempVertex>(new ObjVolume.TempVertex(), new ObjVolume.TempVertex(), new ObjVolume.TempVertex());
 
                     if (temp.Trim().Count(c => c == ' ') == 2) // Check if there's enough elements for a face
                     {
@@ -232,20 +226,19 @@ namespace InSpaceNoOneSeesYourShadow.Content
                         // If any of the parses failed, report the error
                         if (!success)
                         {
-                            Console.WriteLine("Error parsing face: {0}", line);
+                            Logger.LogConsole($"Error parsing face: {line}");
                         }
                         else
                         {
-                            var tv1 = new ObjVolume.TempVertex(v1, n1, t1);
-                            var tv2 = new ObjVolume.TempVertex(v2, n2, t2);
-                            var tv3 = new ObjVolume.TempVertex(v3, n3, t3);
-                            face = new Tuple<ObjVolume.TempVertex, ObjVolume.TempVertex, ObjVolume.TempVertex>(tv1, tv2, tv3);
-                            faces.Add(face);
+                            var tv1 = new TempVertex(v1, n1, t1);
+                            var tv2 = new TempVertex(v2, n2, t2);
+                            var tv3 = new TempVertex(v3, n3, t3);
+                            faces.Add((tv1, tv2, tv3));
                         }
                     }
                     else
                     {
-                        Console.WriteLine("Error parsing face: {0}", line);
+                        Logger.LogConsole($"Error parsing face: {line}");
                     }
                 }
             }
@@ -259,10 +252,25 @@ namespace InSpaceNoOneSeesYourShadow.Content
                 var v2 = new FaceVertex(vertices[face.Item2.Vertex], normals[face.Item2.Normal], texs[face.Item2.TexCoords]);
                 var v3 = new FaceVertex(vertices[face.Item3.Vertex], normals[face.Item3.Normal], texs[face.Item3.TexCoords]);
 
-                vol._faces.Add((v1, v2, v3));
+                vol.Faces.Add((v1, v2, v3));
             }
 
             return vol;
         }
+
+        private class TempVertex
+        {
+            public readonly int Vertex;
+            public readonly int Normal;
+            public readonly int TexCoords;
+
+            public TempVertex(int vertex = 0, int norm = 0, int tex = 0)
+            {
+                Vertex = vertex;
+                Normal = norm;
+                TexCoords = tex;
+            }
+        }
+
     }
 }

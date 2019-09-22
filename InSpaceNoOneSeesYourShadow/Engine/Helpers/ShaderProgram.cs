@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using InSpaceNoOneSeesYourShadow.Engine.Utils;
 using OpenTK;
 using OpenTK.Graphics.OpenGL4;
 
-namespace InSpaceNoOneSeesYourShadow.Helpers
+namespace InSpaceNoOneSeesYourShadow.Engine.Helpers
 {
     public class ShaderProgram
     {
@@ -56,7 +57,7 @@ namespace InSpaceNoOneSeesYourShadow.Helpers
             GL.ShaderSource(address, code);
             GL.CompileShader(address);
             GL.AttachShader(ProgramId, address);
-            Console.WriteLine(GL.GetShaderInfoLog(address));
+            Logger.LogConsole(GL.GetShaderInfoLog(address));
         }
 
         public void LoadShaderFromString(string code, ShaderType type)
@@ -73,7 +74,7 @@ namespace InSpaceNoOneSeesYourShadow.Helpers
 
         public void LoadShaderFromFile(string filename, ShaderType type)
         {
-            using (StreamReader sr = new StreamReader(filename))
+            using (var sr = new StreamReader(filename))
             {
                 if (type == ShaderType.VertexShader)
                 {
@@ -94,14 +95,14 @@ namespace InSpaceNoOneSeesYourShadow.Helpers
         {
             GL.LinkProgram(ProgramId);
 
-            Console.WriteLine(GL.GetProgramInfoLog(ProgramId));
+            Logger.LogConsole(GL.GetProgramInfoLog(ProgramId));
 
             GL.GetProgram(ProgramId, GetProgramParameterName.ActiveAttributes, out _attributeCount);
             GL.GetProgram(ProgramId, GetProgramParameterName.ActiveUniforms, out _uniformCount);
 
-            for (int i = 0; i < AttributeCount; i++)
+            for (var i = 0; i < AttributeCount; i++)
             {
-                AttributeInfo info = new AttributeInfo();
+                var info = new AttributeInfo();
 
                 GL.GetActiveAttrib(ProgramId, i, 256, out _, out info.Size, out info.Type, out var name);
 
@@ -110,9 +111,9 @@ namespace InSpaceNoOneSeesYourShadow.Helpers
                 Attributes.Add(name, info);
             }
 
-            for (int i = 0; i < UniformCount; i++)
+            for (var i = 0; i < UniformCount; i++)
             {
-                UniformInfo info = new UniformInfo();
+                var info = new UniformInfo();
 
                 GL.GetActiveUniform(ProgramId, i, 256, out _, out info.Size, out info.Type, out var name);
 
@@ -124,14 +125,14 @@ namespace InSpaceNoOneSeesYourShadow.Helpers
 
         public void GenBuffers()
         {
-            for (int i = 0; i < Attributes.Count; i++)
+            for (var i = 0; i < Attributes.Count; i++)
             {
                 GL.GenBuffers(1, out uint buffer);
 
                 Buffers.Add(Attributes.Values.ElementAt(i).Name, buffer);
             }
 
-            for (int i = 0; i < Uniforms.Count; i++)
+            for (var i = 0; i < Uniforms.Count; i++)
             {
                 GL.GenBuffers(1, out uint buffer);
 
@@ -141,7 +142,7 @@ namespace InSpaceNoOneSeesYourShadow.Helpers
 
         public void EnableVertexAttributesArrays()
         {
-            for (int i = 0; i < Attributes.Count; i++)
+            for (var i = 0; i < Attributes.Count; i++)
             {
                 GL.EnableVertexAttribArray(Attributes.Values.ElementAt(i).Address);
             }
@@ -149,7 +150,7 @@ namespace InSpaceNoOneSeesYourShadow.Helpers
 
         public void DisableVertexAttributesArrays()
         {
-            for (int i = 0; i < Attributes.Count; i++)
+            for (var i = 0; i < Attributes.Count; i++)
             {
                 GL.DisableVertexAttribArray(Attributes.Values.ElementAt(i).Address);
             }
@@ -187,39 +188,39 @@ namespace InSpaceNoOneSeesYourShadow.Helpers
             return _gShaderId;
         }
 
-        public ShaderProgram(string vshader, string fshader, string geometry, bool fromFile = false)
+        public ShaderProgram(string vShader, string fShader, string geometryShader, bool fromFile = false)
         {
             ProgramId = GL.CreateProgram();
 
             if (fromFile)
             {
-                LoadShaderFromFile(vshader, ShaderType.VertexShader);
-                LoadShaderFromFile(fshader, ShaderType.FragmentShader);
-                LoadShaderFromFile(geometry, ShaderType.GeometryShader);
+                LoadShaderFromFile(vShader, ShaderType.VertexShader);
+                LoadShaderFromFile(fShader, ShaderType.FragmentShader);
+                LoadShaderFromFile(geometryShader, ShaderType.GeometryShader);
             }
             else
             {
-                LoadShaderFromString(vshader, ShaderType.VertexShader);
-                LoadShaderFromString(fshader, ShaderType.FragmentShader);
+                LoadShaderFromString(vShader, ShaderType.VertexShader);
+                LoadShaderFromString(fShader, ShaderType.FragmentShader);
             }
 
             Link();
             GenBuffers();
         }
 
-        public ShaderProgram(string vshader, string fshader, bool fromFile = false)
+        public ShaderProgram(string vShader, string fShader, bool fromFile = false)
         {
             ProgramId = GL.CreateProgram();
 
             if (fromFile)
             {
-                LoadShaderFromFile(vshader, ShaderType.VertexShader);
-                LoadShaderFromFile(fshader, ShaderType.FragmentShader);
+                LoadShaderFromFile(vShader, ShaderType.VertexShader);
+                LoadShaderFromFile(fShader, ShaderType.FragmentShader);
             }
             else
             {
-                LoadShaderFromString(vshader, ShaderType.VertexShader);
-                LoadShaderFromString(fshader, ShaderType.FragmentShader);
+                LoadShaderFromString(vShader, ShaderType.VertexShader);
+                LoadShaderFromString(fShader, ShaderType.FragmentShader);
             }
 
             Link();

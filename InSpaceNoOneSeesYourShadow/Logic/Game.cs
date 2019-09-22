@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using InSpaceNoOneSeesYourShadow.Helpers;
-using InSpaceNoOneSeesYourShadow.Helpers.Cameras;
-using InSpaceNoOneSeesYourShadow.Objects3D;
-using InSpaceNoOneSeesYourShadow.Objects3D.Shapes;
+using InSpaceNoOneSeesYourShadow.Engine.Cameras;
+using InSpaceNoOneSeesYourShadow.Engine.ContentManagement;
+using InSpaceNoOneSeesYourShadow.Engine.Core;
+using InSpaceNoOneSeesYourShadow.Engine.Helpers;
+using InSpaceNoOneSeesYourShadow.Engine.Objects3D;
+using InSpaceNoOneSeesYourShadow.Engine.Objects3D.Shapes;
+using InSpaceNoOneSeesYourShadow.Engine.Utils;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
@@ -140,13 +143,14 @@ namespace InSpaceNoOneSeesYourShadow.Logic
             GameManager.Camera = Camera;
             GameManager.DirectionalLight = _directionalLight;
             GameManager.Spotlight = _spotLight2;
-            GameManager.Pointlight = _pointLight;
+            GameManager.PointLight = _pointLight;
             Camera.Position = new Vector3(0f, 0f, -50f);
+            Camera.ProjectionMatrix = Matrix4.CreateOrthographic(100, 100, 1.0f, 1000.0f);
         }
 
         private GameObject CreateEnemyProjectile()
         {
-            GameObject arrow = new GameObject(Vector3.Zero, new Vector3(-MathHelper.PiOver2, -MathHelper.PiOver2, -MathHelper.PiOver2), Vector3.One, ObjVolume.LoadFromFile("_Resources/Models/cone.obj"));
+            GameObject arrow = new GameObject(Vector3.Zero, new Vector3(-MathHelper.PiOver2, -MathHelper.PiOver2, -MathHelper.PiOver2), Vector3.One, ModelLoader.LoadFromFile("_Resources/Models/cone.obj"));
             arrow.Model.TextureId = _textures["sun.png"];
             arrow.Model.Material = new Material(new Vector3(0.15f), new Vector3(1), new Vector3(0.2f));
             arrow.Transform.PositionModifier = f => arrow.Transform.Position;
@@ -161,11 +165,11 @@ namespace InSpaceNoOneSeesYourShadow.Logic
 
         private void CreateScene()
         {
-            GameObject cubePlane = new GameObject(new Vector3(0f, 0f, 0f), new Vector3(MathHelper.PiOver2, 0, 0f), Vector3.One, ObjVolume.LoadFromFile("_Resources/Models/simple_cube.obj"));
+            GameObject cubePlane = new GameObject(new Vector3(0f, 0f, 0f), new Vector3(MathHelper.PiOver2, 0, 0f), Vector3.One, ModelLoader.LoadFromFile("_Resources/Models/simple_cube.obj"));
             cubePlane.Model.TextureId = _textures["galaxy.png"];
             cubePlane.Transform.Position += new Vector3(0f, 0f, 0f);
             cubePlane.Transform.Rotation = new Vector3(MathHelper.PiOver2, 0, 0f);
-            cubePlane.Model.Material = new Material(new Vector3(0.15f), new Vector3(1), new Vector3(0.2f));
+            cubePlane.Model.Material = new Material(new Vector3(0.5f), new Vector3(1), new Vector3(0.2f));
             //cubePlane.Transform.PositionModifier = f => new Vector3(2 * (float)Math.Sin(MathHelper.DegreesToRadians(f * 80 % 360)), 0f, 2 * (float)Math.Cos(MathHelper.DegreesToRadians(f * 80 % 360)));
             cubePlane.Transform.ScaleModifier = f => new Vector3(50f, 0.1f, 50f);
             cubePlane.Model.PbrValues = new ObjVolume.PBRValues
@@ -184,7 +188,7 @@ namespace InSpaceNoOneSeesYourShadow.Logic
             {
                 for (int i = 0; i < 6; i++)
                 {
-                    GameObject ship = new GameObject(new Vector3(40f - 15 * i, 20f - 10 * j, 0f), new Vector3(MathHelper.Pi, 0, -MathHelper.PiOver2), Vector3.One, ObjVolume.LoadFromFile("_Resources/Models/ship_dread_t.obj"));
+                    GameObject ship = new GameObject(new Vector3(40f - 15 * i, 20f - 10 * j, 0f), new Vector3(MathHelper.Pi, 0, -MathHelper.PiOver2), Vector3.One, ModelLoader.LoadFromFile("_Resources/Models/ship_dread_t.obj"));
                     ship.Model.TextureId = _textures["dread_ship_t.png"];
                     //ship.Transform.Position += new Vector3(40f - 15 * i, 20f - 10 * j, 0f);
                     ship.Transform.PositionModifier = f => ship.Transform.Position + new Vector3((float)Math.Sin(_time) / 100f, -_time / 1000f, 0);
@@ -207,7 +211,7 @@ namespace InSpaceNoOneSeesYourShadow.Logic
                 }
             }
 
-            GameObject playerShip = new GameObject(new Vector3(0f, -40f, -10f), new Vector3(-MathHelper.PiOver2, 0, 0), new Vector3(0.05f, 0.05f, 0.05f), ObjVolume.LoadFromFile("_Resources/Models/ship2.obj"));
+            GameObject playerShip = new GameObject(new Vector3(0f, -40f, -10f), new Vector3(-MathHelper.PiOver2, 0, 0), new Vector3(0.05f, 0.05f, 0.05f), ModelLoader.LoadFromFile("_Resources/Models/ship2.obj"));
             playerShip.Model.Material = new Material(new Vector3(0.5f), new Vector3(1), new Vector3(0.8f));
             playerShip.Model.TextureId = _textures["ship2_diffuse.bmp"];
             playerShip.Model.PbrValues = new ObjVolume.PBRValues
@@ -232,7 +236,7 @@ namespace InSpaceNoOneSeesYourShadow.Logic
 
         private void ShootPlayerProjectile()
         {
-            GameObject arrow = new GameObject(_playerShip.Transform.Position, new Vector3(-MathHelper.PiOver2, 0, 0), Vector3.One, ObjVolume.LoadFromFile("_Resources/Models/arrow.obj"));
+            GameObject arrow = new GameObject(_playerShip.Transform.Position, new Vector3(-MathHelper.PiOver2, 0, 0), Vector3.One, ModelLoader.LoadFromFile("_Resources/Models/arrow.obj"));
 
             arrow.Model.TextureId = _textures["sun.png"];
             arrow.Model.Material = new Material(new Vector3(0.15f), new Vector3(1), new Vector3(0.2f));

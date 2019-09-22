@@ -1,20 +1,16 @@
-﻿using InSpaceNoOneSeesYourShadow.Helpers;
-using InSpaceNoOneSeesYourShadow.Helpers.Cameras;
-using OpenTK;
-using System;
+﻿using OpenTK;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using InSpaceNoOneSeesYourShadow.Engine.Cameras;
+using InSpaceNoOneSeesYourShadow.Engine.Helpers;
 
 namespace InSpaceNoOneSeesYourShadow
 {
     public static class GameManager
     {
-        public static GameCamera Camera;
+        public static Camera Camera;
         public static Light DirectionalLight;
         public static Light Spotlight;
-        public static Light Pointlight;
+        public static Light PointLight;
         public static float Time;
         public static Dictionary<string, ShaderProgram> Shaders;
         public static Vector3 PlayerPosition;

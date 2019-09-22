@@ -1,11 +1,11 @@
-﻿using OpenTK;
+﻿using InSpaceNoOneSeesYourShadow.Engine.Core;
+using InSpaceNoOneSeesYourShadow.Engine.Interfaces;
+using OpenTK;
 
-namespace InSpaceNoOneSeesYourShadow.Objects3D
+namespace InSpaceNoOneSeesYourShadow.Engine.Objects3D
 {
-    public abstract class Volume
+    public abstract class Volume : ICloneable<Volume>
     {
-        public GameObject GameObject;
-
         public virtual int VerticesCount { get; set; }
         public virtual int IndicesCount { get; set; }
         public virtual int ColorDataCount { get; set; }
@@ -21,7 +21,7 @@ namespace InSpaceNoOneSeesYourShadow.Objects3D
         public abstract Vector3[] GetVertices();
         public abstract int[] GetIndices(int offset = 0);
         public abstract Vector3[] GetColorData();
-        public abstract void CalculateModelMatrix();
+        public abstract void CalculateModelMatrix(Transform transform);
         public abstract void UpdateMatrices(Matrix4 newValue);
         public Vector3[] Normals = new Vector3[0];
         public virtual int NormalCount => Normals.Length;
@@ -67,5 +67,9 @@ namespace InSpaceNoOneSeesYourShadow.Objects3D
         public int TextureId;
         public virtual int TextureCoordsCount { get; set; }
         public abstract Vector2[] GetTextureCoords();
+        public Volume Clone()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

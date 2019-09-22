@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using InSpaceNoOneSeesYourShadow.Helpers;
+using InSpaceNoOneSeesYourShadow.Engine.Helpers;
 using OpenTK.Graphics.OpenGL4;
 using PixelFormat = OpenTK.Graphics.OpenGL4.PixelFormat;
 
-namespace InSpaceNoOneSeesYourShadow.Content
+namespace InSpaceNoOneSeesYourShadow.Engine.ContentManagement
 {
-    class Texture2DLoader
+    internal class Texture2DLoader
     {
         private static readonly Dictionary<string, Texture2D> Cache = new Dictionary<string, Texture2D>();
 
@@ -32,9 +28,9 @@ namespace InSpaceNoOneSeesYourShadow.Content
             {
                 return result;
             }
-            Bitmap bitmap = new Bitmap(filename);
+            var bitmap = new Bitmap(filename);
             var id = GL.GenTexture();
-            BitmapData bmpData = bitmap.LockBits(
+            var bmpData = bitmap.LockBits(
                 new Rectangle(0, 0, bitmap.Width, bitmap.Height),
                 ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             GL.BindTexture(TextureTarget.Texture2D, id);

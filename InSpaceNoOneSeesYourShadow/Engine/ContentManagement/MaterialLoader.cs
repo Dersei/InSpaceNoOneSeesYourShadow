@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using InSpaceNoOneSeesYourShadow.Objects3D;
+using InSpaceNoOneSeesYourShadow.Engine.Objects3D;
+using InSpaceNoOneSeesYourShadow.Engine.Utils;
 using OpenTK;
 
-namespace InSpaceNoOneSeesYourShadow.Content
+namespace InSpaceNoOneSeesYourShadow.Engine.ContentManagement
 {
     internal static class MaterialLoader
     {
@@ -24,6 +25,7 @@ namespace InSpaceNoOneSeesYourShadow.Content
             return false;
         }
 
+
         public static Dictionary<string, Material> LoadFromFile(string filename)
         {
             if (CheckIfCached(filename, out var result))
@@ -35,64 +37,83 @@ namespace InSpaceNoOneSeesYourShadow.Content
 
             try
             {
-                var currentmat = "";
+                var currentMaterial = "";
                 using (var reader = new StreamReader(new FileStream(filename, FileMode.Open, FileAccess.Read)))
                 {
-                    string currentLine;
-
                     while (!reader.EndOfStream)
                     {
-                        currentLine = reader.ReadLine();
+                        var currentLine = reader.ReadLine();
 
-                        if (!currentLine.StartsWith("newmtl"))
+                        if (currentLine != null && !currentLine.StartsWith("newmtl"))
                         {
-                            if (currentmat.StartsWith("newmtl"))
+                            if (currentMaterial.StartsWith("newmtl"))
                             {
-                                currentmat += currentLine + "\n";
+                                currentMaterial += currentLine + "\n";
                             }
                         }
                         else
                         {
-                            if (currentmat.Length > 0)
+                            if (currentMaterial.Length > 0)
                             {
-                                var newMat = new Material();
+                                var newMaterial = LoadFromString(currentMaterial, out var newMaterialName);
 
-                                newMat = LoadFromString(currentmat, out var newMatName);
-
-                                mats.Add(newMatName, newMat);
+                                mats.Add(newMaterialName, newMaterial);
                             }
 
-                            currentmat = currentLine + "\n";
+                            currentMaterial = currentLine + "\n";
                         }
                     }
                 }
 
                 // Add final material
-                if (currentmat.Count(c => c == '\n') > 0)
+                if (currentMaterial.Count(c => c == '\n') > 0)
                 {
-                    var newMat = new Material();
+                    var newMaterial = LoadFromString(currentMaterial, out var newMaterialName);
 
-                    newMat = LoadFromString(currentmat, out var newMatName);
-
-                    mats.Add(newMatName, newMat);
+                    mats.Add(newMaterialName, newMaterial);
                 }
             }
             catch (FileNotFoundException)
             {
-                Console.WriteLine("File not found: {0}", filename);
+                Logger.LogConsole($"File not found: {filename}");
             }
             catch (Exception)
             {
-                Console.WriteLine("Error loading file: {0}", filename);
+                Logger.LogConsole($"Error loading file: {filename}");
             }
-
-            Cache.Add(filename, mats);
 
             return mats;
         }
 
+        private static Vector3 ParseColor(string line)
+        {
+            const NumberStyles style = NumberStyles.Number;
+            var culture = CultureInfo.CreateSpecificCulture("en-GB");
+            var colorParts = line.Substring(3).Split(' ');
+            // Check that all vector fields are present
+            if (colorParts.Length < 3)
+            {
+                throw new ArgumentException("Invalid color data");
+            }
+            var vector = new Vector3();
+            // Attempt to parse each part of the color
+            var success = float.TryParse(colorParts[0], style, culture, out vector.X);
+            success |= float.TryParse(colorParts[1], style, culture, out vector.Y);
+            success |= float.TryParse(colorParts[2], style, culture, out vector.Z);
+            //output.AmbientColor = new Vector3(float.Parse(colorParts[0], style, culture), float.Parse(colorParts[1], style, culture), float.Parse(colorParts[2], style, culture));
+            // If any of the parses failed, report the error
+            if (!success)
+            {
+                Logger.LogConsole("Error parsing color: {0}", line);
+            }
+
+            return vector;
+        }
+
         public static Material LoadFromString(string mat, out string name)
         {
+            const NumberStyles style = NumberStyles.Number;
+            var culture = CultureInfo.CreateSpecificCulture("en-GB");
             var output = new Material();
             name = "";
 
@@ -123,94 +144,25 @@ namespace InSpaceNoOneSeesYourShadow.Content
                 // Parse ambient color
                 if (line.StartsWith("Ka"))
                 {
-                    var colorparts = line.Substring(3).Split(' ');
-
-                    // Check that all vector fields are present
-                    if (colorparts.Length < 3)
-                    {
-                        throw new ArgumentException("Invalid color data");
-                    }
-
-                    var vec = new Vector3();
-                    var style = NumberStyles.Number;
-                    var culture = CultureInfo.CreateSpecificCulture("en-GB");
-                    // Attempt to parse each part of the color
-                    var success = float.TryParse(colorparts[0], style, culture, out vec.X);
-                    success |= float.TryParse(colorparts[1], style, culture, out vec.Y);
-                    success |= float.TryParse(colorparts[2], style, culture, out vec.Z);
-
-                    output.AmbientColor = new Vector3(float.Parse(colorparts[0], style, culture), float.Parse(colorparts[1], style, culture), float.Parse(colorparts[2], style, culture));
-
-                    // If any of the parses failed, report the error
-                    if (!success)
-                    {
-                        Console.WriteLine("Error parsing color: {0}", line);
-                    }
+                    output.AmbientColor = ParseColor(line);
                 }
 
                 // Parse diffuse color
                 if (line.StartsWith("Kd"))
                 {
-                    var colorparts = line.Substring(3).Split(' ');
-
-                    // Check that all vector fields are present
-                    if (colorparts.Length < 3)
-                    {
-                        throw new ArgumentException("Invalid color data");
-                    }
-
-                    var vec = new Vector3();
-
-                    // Attempt to parse each part of the color
-                    var style = NumberStyles.Number;
-                    var culture = CultureInfo.CreateSpecificCulture("en-GB");
-                    var success = float.TryParse(colorparts[0], style, culture, out vec.X);
-                    success |= float.TryParse(colorparts[1], style, culture, out vec.Y);
-                    success |= float.TryParse(colorparts[2], style, culture, out vec.Z);
-                    output.DiffuseColor = new Vector3(float.Parse(colorparts[0], style, culture), float.Parse(colorparts[1], style, culture), float.Parse(colorparts[2], style, culture));
-
-                    // If any of the parses failed, report the error
-                    if (!success)
-                    {
-                        Console.WriteLine("Error parsing color: {0}", line);
-                    }
+                    output.DiffuseColor = ParseColor(line);
                 }
 
                 // Parse specular color
                 if (line.StartsWith("Ks"))
                 {
-                    var colorparts = line.Substring(3).Split(' ');
-
-                    // Check that all vector fields are present
-                    if (colorparts.Length < 3)
-                    {
-                        throw new ArgumentException("Invalid color data");
-                    }
-
-                    var vec = new Vector3();
-
-                    // Attempt to parse each part of the color
-                    var style = NumberStyles.Number;
-                    var culture = CultureInfo.CreateSpecificCulture("en-GB");
-                    var success = float.TryParse(colorparts[0], style, culture, out vec.X);
-                    success |= float.TryParse(colorparts[1], style, culture, out vec.Y);
-                    success |= float.TryParse(colorparts[2], style, culture, out vec.Z);
-
-                    output.SpecularColor = new Vector3(float.Parse(colorparts[0], style, culture), float.Parse(colorparts[1], style, culture), float.Parse(colorparts[2], style, culture));
-
-                    // If any of the parses failed, report the error
-                    if (!success)
-                    {
-                        Console.WriteLine("Error parsing color: {0}", line);
-                    }
+                    output.SpecularColor = ParseColor(line);
                 }
 
                 // Parse specular exponent
                 if (line.StartsWith("Ns"))
                 {
                     // Attempt to parse each part of the color
-                    const NumberStyles style = NumberStyles.Number;
-                    var culture = CultureInfo.CreateSpecificCulture("en-GB");
                     var success = float.TryParse(line.Substring(3), style, culture, out var exponent);
 
                     output.SpecularExponent = exponent;
@@ -218,7 +170,7 @@ namespace InSpaceNoOneSeesYourShadow.Content
                     // If any of the parses failed, report the error
                     if (!success)
                     {
-                        Console.WriteLine("Error parsing specular exponent: {0}", line);
+                        Logger.LogConsole("Error parsing specular exponent: {0}", line);
                     }
                 }
 

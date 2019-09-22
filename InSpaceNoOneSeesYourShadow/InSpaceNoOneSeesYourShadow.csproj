@@ -89,26 +89,28 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Content\MaterialLoader.cs" />
-    <Compile Include="Content\ModelLoader.cs" />
-    <Compile Include="Content\Texture2DLoader.cs" />
+    <Compile Include="Engine\ContentManagement\MaterialLoader.cs" />
+    <Compile Include="Engine\ContentManagement\ModelLoader.cs" />
+    <Compile Include="Engine\ContentManagement\Texture2DLoader.cs" />
+    <Compile Include="Engine\Interfaces\ICloneable.cs" />
     <Compile Include="GameManager.cs" />
-    <Compile Include="GameObject.cs" />
-    <Compile Include="Helpers\ImageLoader.cs" />
-    <Compile Include="Helpers\Skybox.cs" />
+    <Compile Include="Engine\Core\GameObject.cs" />
+    <Compile Include="Engine\Cameras\Camera.cs" />
+    <Compile Include="Engine\Utils\ImageLoader.cs" />
+    <Compile Include="Engine\Helpers\Skybox.cs" />
     <Compile Include="Logic\Game.cs" />
-    <Compile Include="Objects3D\Material.cs" />
-    <Compile Include="Objects3D\Shapes\ObjVolume.cs" />
-    <Compile Include="Objects3D\Volume.cs" />
-    <Compile Include="Helpers\Cameras\BasicCamera.cs" />
-    <Compile Include="Helpers\Cameras\GameCamera.cs" />
-    <Compile Include="Helpers\Light.cs" />
-    <Compile Include="Helpers\ShaderProgram.cs" />
-    <Compile Include="Helpers\Texture2D.cs" />
-    <Compile Include="Helpers\TextUtils.cs" />
-    <Compile Include="Helpers\Cameras\TutorialCamera.cs" />
-    <Compile Include="Helpers\Utils.cs" />
-    <Compile Include="Transform.cs" />
+    <Compile Include="Engine\Objects3D\Material.cs" />
+    <Compile Include="Engine\Objects3D\Shapes\ObjVolume.cs" />
+    <Compile Include="Engine\Objects3D\Volume.cs" />
+    <Compile Include="Engine\Cameras\BasicCamera.cs" />
+    <Compile Include="Engine\Cameras\GameCamera.cs" />
+    <Compile Include="Engine\Helpers\Light.cs" />
+    <Compile Include="Engine\Helpers\ShaderProgram.cs" />
+    <Compile Include="Engine\Helpers\Texture2D.cs" />
+    <Compile Include="Engine\Utils\TextUtils.cs" />
+    <Compile Include="Engine\Cameras\TutorialCamera.cs" />
+    <Compile Include="Engine\Utils\Logger.cs" />
+    <Compile Include="Engine\Core\Transform.cs" />
     <Page Include="GUI\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -240,9 +242,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Utils\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="_Resources\Textures\galaxy.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

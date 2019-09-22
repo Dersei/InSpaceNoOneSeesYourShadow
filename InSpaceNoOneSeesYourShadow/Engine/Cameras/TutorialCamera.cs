@@ -1,30 +1,33 @@
 ﻿using System;
 using OpenTK;
 
-namespace InSpaceNoOneSeesYourShadow.Helpers.Cameras
+namespace InSpaceNoOneSeesYourShadow.Engine.Cameras
 {
-    public class GameCamera
+    internal class TutorialCamera : Camera
     {
-        public Vector3 Position = Vector3.Zero;
-        public Vector3 Orientation = new Vector3((float)Math.PI, 0f, 0f);
-        public float MoveSpeed = 0.2f;
-        public float MouseSensitivity = 0.01f;
 
+        public TutorialCamera()
+        {
+            Position = Vector3.Zero;
+            Orientation = new Vector3((float)Math.PI, 0f, 0f);
+            MoveSpeed = 0.2f;
+            MouseSensitivity = 0.01f;
+        }
         /// <summary>
         /// Create a view matrix for this Camera
         /// </summary>
         /// <returns>A view matrix to look in the camera's direction</returns>
-        public Matrix4 GetViewMatrix()
+        protected override Matrix4 GetViewMatrix()
         {
-            //Vector3 lookAt = new Vector3
-            //{
-            //    X = (float)(Math.Sin(Orientation.X) * Math.Cos(Orientation.Y)),
-            //    Y = (float)Math.Sin(Orientation.Y),
-            //    Z = (float)(Math.Cos(Orientation.X) * Math.Cos(Orientation.Y))
-            //};
+            Vector3 lookAt = new Vector3
+            {
+                X = (float)(Math.Sin(Orientation.X) * Math.Cos(Orientation.Y)),
+                Y = (float)Math.Sin(Orientation.Y),
+                Z = (float)(Math.Cos(Orientation.X) * Math.Cos(Orientation.Y))
+            };
 
 
-            return Matrix4.LookAt(Position, Vector3.Zero, Vector3.UnitY);
+            return Matrix4.LookAt(Position, Position + lookAt, Vector3.UnitY);
         }
 
         /// <summary>
@@ -33,11 +36,11 @@ namespace InSpaceNoOneSeesYourShadow.Helpers.Cameras
         /// <param name="x">Movement along the camera ground (left/right)</param>
         /// <param name="y">Movement along the camera axis (forward)</param>
         /// <param name="z">Height to move</param>
-        public void Move(float x, float y, float z)
+        public override void Move(float x, float y, float z)
         {
-            Vector3 offset = new Vector3();
-            Vector3 forward = new Vector3((float)Math.Sin(Orientation.X), 0, (float)Math.Cos(Orientation.X));
-            Vector3 right = new Vector3(-forward.Z, 0, forward.X);
+            var offset = new Vector3();
+            var forward = new Vector3((float)Math.Sin(Orientation.X), 0, (float)Math.Cos(Orientation.X));
+            var right = new Vector3(-forward.Z, 0, forward.X);
 
             offset += x * right;
             offset += y * forward;
@@ -54,7 +57,7 @@ namespace InSpaceNoOneSeesYourShadow.Helpers.Cameras
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        public void AddRotation(float x, float y)
+        public override void AddRotation(float x, float y)
         {
             x *= MouseSensitivity;
             y *= MouseSensitivity;

@@ -2,14 +2,11 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using PixelFormat = OpenTK.Graphics.OpenGL4.PixelFormat;
 
-namespace InSpaceNoOneSeesYourShadow.Helpers
+namespace InSpaceNoOneSeesYourShadow.Engine.Helpers
 {
     public class Skybox
     {

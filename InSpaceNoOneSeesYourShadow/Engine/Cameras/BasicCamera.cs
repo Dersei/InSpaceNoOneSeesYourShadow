@@ -1,16 +1,19 @@
 ﻿using System;
 using OpenTK;
 
-namespace InSpaceNoOneSeesYourShadow.Helpers.Cameras
+namespace InSpaceNoOneSeesYourShadow.Engine.Cameras
 {
-    internal class BasicCamera
+    internal class BasicCamera : Camera
     {
-        public Vector3 Position = new Vector3(0, 0, 0);
-        public Vector3 Orientation = new Vector3((float)Math.PI, 0f, 0f);
-        public float MoveSpeed = 0.2f;
-        public float MouseSensitivity = 0.01f;
+        public BasicCamera()
+        {
+            Position = new Vector3(0, 0, 0);
+            Orientation = new Vector3((float)Math.PI, 0f, 0f);
+            MoveSpeed = 0.2f;
+            MouseSensitivity = 0.01f;
+        }
 
-        public Matrix4 GetViewMatrix()
+        protected override Matrix4 GetViewMatrix()
         {
             var lookAt = new Vector3
             {
@@ -22,8 +25,8 @@ namespace InSpaceNoOneSeesYourShadow.Helpers.Cameras
 
             return Matrix4.LookAt(Position - lookAt, Position + lookAt, Vector3.UnitY);
         }
-
-        public void Move(float x, float y, float z)
+        
+        public override void Move(float x, float y, float z)
         {
             var offset = new Vector3();
 
@@ -40,7 +43,7 @@ namespace InSpaceNoOneSeesYourShadow.Helpers.Cameras
             Position += offset;
         }
 
-        public void AddRotation(float x, float y)
+        public override void AddRotation(float x, float y)
         {
             x *= MouseSensitivity;
             y *= MouseSensitivity;

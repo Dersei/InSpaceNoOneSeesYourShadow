@@ -2,9 +2,9 @@
 using System.Drawing;
 using System.Linq;
 
-namespace InSpaceNoOneSeesYourShadow.Helpers
+namespace InSpaceNoOneSeesYourShadow.Engine.Utils
 {
-    class TextUtils
+    internal class TextUtils
     {
         private const string Characters = @"qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM0123456789µ§½!""#¤%&/()=?^*@£€${[]}\~¨'-_.:,;<>|°©®±¥";
 
