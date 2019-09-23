@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using InSpaceNoOneSeesYourShadow.Engine.Shaders;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using PixelFormat = OpenTK.Graphics.OpenGL4.PixelFormat;

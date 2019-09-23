@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using InSpaceNoOneSeesYourShadow.Engine.Objects3D.Shapes;
 using InSpaceNoOneSeesYourShadow.Engine.Utils;
 using OpenTK;
 using OpenTK.Graphics.OpenGL4;
 
-namespace InSpaceNoOneSeesYourShadow.Engine.Helpers
+namespace InSpaceNoOneSeesYourShadow.Engine.Shaders
 {
     public class ShaderProgram
     {
@@ -45,6 +46,7 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Helpers
         public Dictionary<string, AttributeInfo> Attributes = new Dictionary<string, AttributeInfo>();
         public Dictionary<string, UniformInfo> Uniforms = new Dictionary<string, UniformInfo>();
         public Dictionary<string, uint> Buffers = new Dictionary<string, uint>();
+        public Model Model;
 
         public ShaderProgram()
         {
@@ -304,6 +306,21 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Helpers
             }
 
             return false;
+        }
+
+        public virtual void Draw()
+        {
+            SetUniform("view", GameManager.Camera.ViewMatrix);
+            SetUniform("camPos", GameManager.Camera.Position);
+            SetUniform("material_ambient", Model.Material.AmbientColor);
+            SetUniform("material_diffuse", Model.Material.DiffuseColor);
+            SetUniform("material_specular", Model.Material.SpecularColor);
+            SetUniform("material_specExponent", Model.Material.SpecularExponent);
+            SetUniform("light_position", GameManager.DirectionalLight.Position);
+            SetUniform("light_color", GameManager.DirectionalLight.Color);
+            SetUniform("light_diffuseIntensity", GameManager.DirectionalLight.DiffuseIntensity);
+            SetUniform("light_ambientIntensity", GameManager.DirectionalLight.AmbientIntensity);
+            SetUniform("time", GameManager.Time);
         }
 
         public class UniformInfo

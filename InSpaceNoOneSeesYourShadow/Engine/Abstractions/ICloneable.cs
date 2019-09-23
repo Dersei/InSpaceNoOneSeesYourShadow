@@ -1,4 +1,4 @@
-﻿namespace InSpaceNoOneSeesYourShadow.Engine.Interfaces
+﻿namespace InSpaceNoOneSeesYourShadow.Engine.Abstractions
 {
     public interface ICloneable<out T>
     {

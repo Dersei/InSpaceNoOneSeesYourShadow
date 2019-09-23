@@ -93,22 +93,27 @@
     <Compile Include="Engine\ContentManagement\MaterialLoader.cs" />
     <Compile Include="Engine\ContentManagement\ModelLoader.cs" />
     <Compile Include="Engine\ContentManagement\Texture2DLoader.cs" />
+    <Compile Include="Engine\Core\Component.cs" />
     <Compile Include="Engine\Extensions\QuaternionExtensions.cs" />
     <Compile Include="Engine\Extensions\RandomExtensions.cs" />
     <Compile Include="Engine\Extensions\VariousExtensions.cs" />
-    <Compile Include="Engine\Interfaces\ICloneable.cs" />
+    <Compile Include="Engine\Abstractions\ICloneable.cs" />
+    <Compile Include="Engine\Abstractions\Scene.cs" />
+    <Compile Include="Engine\Shaders\LitShader.cs" />
+    <Compile Include="Engine\Shaders\PBRShader.cs" />
     <Compile Include="GameManager.cs" />
     <Compile Include="Engine\Core\GameObject.cs" />
     <Compile Include="Engine\Cameras\Camera.cs" />
     <Compile Include="Engine\Utils\ImageLoader.cs" />
     <Compile Include="Engine\Helpers\Skybox.cs" />
+    <Compile Include="Logic\EnemyComponent.cs" />
     <Compile Include="Logic\Game.cs" />
     <Compile Include="Engine\Objects3D\Material.cs" />
     <Compile Include="Engine\Objects3D\Shapes\Model.cs" />
     <Compile Include="Engine\Cameras\BasicCamera.cs" />
     <Compile Include="Engine\Cameras\GameCamera.cs" />
     <Compile Include="Engine\Helpers\Light.cs" />
-    <Compile Include="Engine\Helpers\ShaderProgram.cs" />
+    <Compile Include="Engine\Shaders\ShaderProgram.cs" />
     <Compile Include="Engine\Helpers\Texture2D.cs" />
     <Compile Include="Engine\Utils\TextUtils.cs" />
     <Compile Include="Engine\Cameras\TutorialCamera.cs" />
@@ -128,6 +133,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Logic\Level1Scene.cs" />
+    <Compile Include="Logic\PlayerComponent.cs" />
+    <Compile Include="Logic\ShooterComponent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -166,49 +174,10 @@
     <None Include="_Resources\Models\simple_cube.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="_Resources\Shaders\FragmentShader.glsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="_Resources\Shaders\fs.glsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="_Resources\Shaders\fs_lit.glsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="_Resources\Shaders\fs_lit_g.glsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="_Resources\Shaders\fs_norm.glsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="_Resources\Shaders\fs_tex.glsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="_Resources\Shaders\geometry.glsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="_Resources\Shaders\geometry2.glsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="_Resources\Shaders\geometry2_cylinder.glsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="_Resources\Shaders\PBR.glsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="_Resources\Shaders\shaderPBR.frag">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="_Resources\Shaders\simpleDepthFragment.glsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="_Resources\Shaders\simpleDepthFragment2.glsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="_Resources\Shaders\simpleDepthShader.glsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="_Resources\Shaders\simpleDepthShader2.glsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="_Resources\Shaders\Skybox\skybox.frag">
@@ -223,22 +192,7 @@
     <None Include="_Resources\Shaders\Skybox\skybox_reflect.vert">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="_Resources\Shaders\VertexShader.glsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="_Resources\Shaders\vs.glsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="_Resources\Shaders\vs_lit.glsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="_Resources\Shaders\vs_lit_g.glsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="_Resources\Shaders\vs_norm.glsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="_Resources\Shaders\vs_tex.glsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

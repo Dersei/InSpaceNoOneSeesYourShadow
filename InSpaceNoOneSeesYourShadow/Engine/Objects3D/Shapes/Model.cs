@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Runtime.InteropServices;
 using InSpaceNoOneSeesYourShadow.Engine.Helpers;
+using InSpaceNoOneSeesYourShadow.Engine.Shaders;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
@@ -47,8 +48,17 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Objects3D.Shapes
         public int VAO;
         public int VBO;
         public int EBO;
+        private ShaderProgram _volumeShader;
 
-        public ShaderProgram VolumeShader { get; set; }
+        public ShaderProgram VolumeShader
+        {
+            get => _volumeShader;
+            set
+            {
+                _volumeShader = value;
+                _volumeShader.Model = this;
+            }
+        }
 
         public unsafe void Bind(bool onlyStructs = false)
         {
@@ -159,6 +169,24 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Objects3D.Shapes
             }
 
             return normals.ToArray();
+        }
+
+        public void BeginDraw()
+        {
+            VolumeShader.EnableVertexAttributesArrays();
+            GL.UseProgram(VolumeShader.ProgramId);
+            GL.ActiveTexture(TextureUnit.Texture0);
+            GL.BindTexture(TextureTarget.Texture2D, TextureId);
+
+            VolumeShader.Draw();
+        }
+
+        public void EndDraw()
+        {
+            GL.BindVertexArray(VAO);
+            GL.DrawElements(PrimitiveType.Triangles, IndicesCount, DrawElementsType.UnsignedInt, 0);
+            GL.BindVertexArray(0);
+            VolumeShader.DisableVertexAttributesArrays();
         }
 
         public struct FaceVertex
