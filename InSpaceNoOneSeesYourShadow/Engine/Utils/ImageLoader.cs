@@ -29,7 +29,7 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Utils
         {
             try
             {
-                var file = new Bitmap(filename);
+                using var file = new Bitmap(filename);
                 return LoadImage(file);
             }
             catch (FileNotFoundException)

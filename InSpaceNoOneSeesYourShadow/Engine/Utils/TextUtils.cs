@@ -11,28 +11,26 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Utils
         public Bitmap GenerateCharacters(int fontSize, string fontName, out Size charSize)
         {
             var characters = new List<Bitmap>();
-            using (var font = new Font(fontName, fontSize))
+            using var font = new Font(fontName, fontSize);
+            foreach (var ch in Characters)
             {
-                for (int i = 0; i < Characters.Length; i++)
-                {
-                    var charBmp = GenerateCharacter(font, Characters[i]);
-                    characters.Add(charBmp);
-                }
-                charSize = new Size(characters.Max(x => x.Width), characters.Max(x => x.Height));
-                var charMap = new Bitmap(charSize.Width * characters.Count, charSize.Height);
-                using (var gfx = Graphics.FromImage(charMap))
-                {
-                    gfx.FillRectangle(Brushes.Black, 0, 0, charMap.Width, charMap.Height);
-                    for (int i = 0; i < characters.Count; i++)
-                    {
-                        var c = characters[i];
-                        gfx.DrawImageUnscaled(c, i * charSize.Width, 0);
-
-                        c.Dispose();
-                    }
-                }
-                return charMap;
+                var charBmp = GenerateCharacter(font, ch);
+                characters.Add(charBmp);
             }
+            charSize = new Size(characters.Max(x => x.Width), characters.Max(x => x.Height));
+            var charMap = new Bitmap(charSize.Width * characters.Count, charSize.Height);
+            using (var gfx = Graphics.FromImage(charMap))
+            {
+                gfx.FillRectangle(Brushes.Black, 0, 0, charMap.Width, charMap.Height);
+                for (int i = 0; i < characters.Count; i++)
+                {
+                    var c = characters[i];
+                    gfx.DrawImageUnscaled(c, i * charSize.Width, 0);
+
+                    c.Dispose();
+                }
+            }
+            return charMap;
         }
 
         private Bitmap GenerateCharacter(Font font, char c)
@@ -48,13 +46,9 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Utils
         }
         private SizeF GetSize(Font font, char c)
         {
-            using (var bmp = new Bitmap(512, 512))
-            {
-                using (var gfx = Graphics.FromImage(bmp))
-                {
-                    return gfx.MeasureString(c.ToString(), font);
-                }
-            }
+            using var bmp = new Bitmap(512, 512);
+            using var gfx = Graphics.FromImage(bmp);
+            return gfx.MeasureString(c.ToString(), font);
         }
     }
 }

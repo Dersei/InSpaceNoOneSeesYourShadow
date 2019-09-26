@@ -124,7 +124,7 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Helpers
 
             for (int i = 0; i < faces.Count; i++)
             {
-                Bitmap bitmap = new Bitmap(faces[i]);
+                using var bitmap = new Bitmap(faces[i]);
                 BitmapData bmpData = bitmap.LockBits(
                     new Rectangle(0, 0, bitmap.Width, bitmap.Height),
                     ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using InSpaceNoOneSeesYourShadow.Engine.ContentManagement;
 using InSpaceNoOneSeesYourShadow.Engine.Objects3D.Shapes;
 using OpenTK;
 
@@ -44,8 +45,14 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Core
             Transform = new Transform(position, rotation, scale);
             Model = model;
             GameManager.CurrentScene.AddGameObject(this);
-            if(_isInGame) Start();
+            if (_isInGame) Start();
         }
+
+        public GameObject(Vector3 position, Vector3 rotation, Vector3 scale, string modelName) : this(position, rotation, scale, ModelLoader.LoadFromFile(modelName)) { }
+        public GameObject(Vector3 position, Model model) : this(position, Vector3.Zero, Vector3.One, model) { }
+        public GameObject(Vector3 position, Vector3 rotation, Model model) : this(position, rotation, Vector3.One, model) { }
+        public GameObject(Vector3 position, Vector3 rotation, string modelName) : this(position, rotation, Vector3.One, modelName) { }
+        public GameObject(Vector3 position, string modelName) : this(position, Vector3.Zero, Vector3.One, modelName) { }
 
         public void Update(float value)
         {

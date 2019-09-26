@@ -39,10 +39,8 @@ namespace InSpaceNoOneSeesYourShadow.Engine.ContentManagement
             var obj = new Model();
             try
             {
-                using (var reader = new StreamReader(new FileStream(filename, FileMode.Open, FileAccess.Read)))
-                {
-                    obj = LoadFromString(reader.ReadToEnd());
-                }
+                using var reader = new StreamReader(new FileStream(filename, FileMode.Open, FileAccess.Read));
+                obj = LoadFromString(reader.ReadToEnd());
             }
             catch (FileNotFoundException)
             {

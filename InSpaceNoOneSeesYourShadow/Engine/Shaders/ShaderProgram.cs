@@ -76,20 +76,18 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Shaders
 
         public void LoadShaderFromFile(string filename, ShaderType type)
         {
-            using (var sr = new StreamReader(filename))
+            using var streamReader = new StreamReader(filename);
+            if (type == ShaderType.VertexShader)
             {
-                if (type == ShaderType.VertexShader)
-                {
-                    LoadShader(sr.ReadToEnd(), type, out _vShaderId);
-                }
-                else if (type == ShaderType.FragmentShader)
-                {
-                    LoadShader(sr.ReadToEnd(), type, out _fShaderId);
-                }
-                else if (type == ShaderType.GeometryShader)
-                {
-                    LoadShader(sr.ReadToEnd(), type, out _gShaderId);
-                }
+                LoadShader(streamReader.ReadToEnd(), type, out _vShaderId);
+            }
+            else if (type == ShaderType.FragmentShader)
+            {
+                LoadShader(streamReader.ReadToEnd(), type, out _fShaderId);
+            }
+            else if (type == ShaderType.GeometryShader)
+            {
+                LoadShader(streamReader.ReadToEnd(), type, out _gShaderId);
             }
         }
 

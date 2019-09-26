@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using InSpaceNoOneSeesYourShadow.Engine;
-using InSpaceNoOneSeesYourShadow.Engine.ContentManagement;
 using InSpaceNoOneSeesYourShadow.Engine.Core;
 using InSpaceNoOneSeesYourShadow.Engine.Objects3D;
 using OpenTK;
@@ -13,6 +12,7 @@ namespace InSpaceNoOneSeesYourShadow.Logic
     {
         private readonly List<GameObject> _cachedEnemyProjectiles = new List<GameObject>();
         private readonly List<GameObject> _activeEnemyProjectiles = new List<GameObject>();
+        private readonly int _maxProjectiles = 3;
 
         public override void Update(float time)
         {
@@ -20,9 +20,12 @@ namespace InSpaceNoOneSeesYourShadow.Logic
             CheckCollisionsWithPlayer();
         }
 
-        private GameObject CreateEnemyProjectile()
+        private static GameObject CreateEnemyProjectile()
         {
-            GameObject arrow = new GameObject(Vector3.Zero, new Vector3(-MathHelper.PiOver2, -MathHelper.PiOver2, -MathHelper.PiOver2), Vector3.One, ModelLoader.LoadFromFile("_Resources/Models/cone.obj"));
+            GameObject arrow = new GameObject(Vector3.Zero,
+                new Vector3(-MathHelper.PiOver2, -MathHelper.PiOver2, -MathHelper.PiOver2),
+                "_Resources/Models/cone.obj");
+            arrow.ShouldNotRender = true;
             arrow.Model.TextureId = GameManager.Textures["sun.png"];
             arrow.Model.Material = new Material(new Vector3(0.15f), new Vector3(1), new Vector3(0.2f));
             arrow.Transform.PositionModifier = f => arrow.Transform.Position;
@@ -34,13 +37,14 @@ namespace InSpaceNoOneSeesYourShadow.Logic
 
         public void SpawnEnemyProjectiles()
         {
-            var chance = Basic.Random.Next(0, 100);
-            if (chance > 5 || _activeEnemyProjectiles.Count > 3)
+            var chance = Basic.Random.Next(0, 1000);
+            if (chance > 5 || _activeEnemyProjectiles.Count > _maxProjectiles)
             {
                 return;
             }
             var arrow = _cachedEnemyProjectiles.Except(_activeEnemyProjectiles).FirstOrDefault();
             if (arrow is null) return;
+            arrow.ShouldNotRender = false;
             arrow.Transform.Position = GameObject.Transform.Position + new Vector3(0, 1, 0);
             arrow.Transform.PositionModifier = f => arrow.Transform.Position - new Vector3(0, 0.2f, 0);
             _activeEnemyProjectiles.Add(arrow);

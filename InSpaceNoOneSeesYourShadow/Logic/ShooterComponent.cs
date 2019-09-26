@@ -41,8 +41,9 @@ namespace InSpaceNoOneSeesYourShadow.Logic
 
         private void ShootPlayerProjectile()
         {
-            GameObject arrow = new GameObject(GameObject.Transform.Position, new Vector3(-MathHelper.PiOver2, 0, 0), Vector3.One, ModelLoader.LoadFromFile("_Resources/Models/arrow.obj"));
-
+            GameObject arrow = new GameObject(GameObject.Transform.Position, 
+                new Vector3(-MathHelper.PiOver2, 0, 0), 
+                "_Resources/Models/arrow.obj");
             arrow.Model.TextureId = GameManager.Textures["sun.png"];
             arrow.Model.Material = new Material(new Vector3(0.15f), new Vector3(1), new Vector3(0.2f));
             arrow.Transform.PositionModifier = f => arrow.Transform.Position + new Vector3(0, 0.2f, 0);
