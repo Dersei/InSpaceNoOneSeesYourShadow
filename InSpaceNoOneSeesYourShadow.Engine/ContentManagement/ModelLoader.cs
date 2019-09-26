@@ -9,7 +9,7 @@ using OpenTK;
 
 namespace InSpaceNoOneSeesYourShadow.Engine.ContentManagement
 {
-    internal static class ModelLoader
+    public static class ModelLoader
     {
         private static readonly Dictionary<string, Model> Cache = new Dictionary<string, Model>();
 
@@ -39,10 +39,8 @@ namespace InSpaceNoOneSeesYourShadow.Engine.ContentManagement
             var obj = new Model();
             try
             {
-                using (var reader = new StreamReader(new FileStream(filename, FileMode.Open, FileAccess.Read)))
-                {
-                    obj = LoadFromString(reader.ReadToEnd());
-                }
+                using var reader = new StreamReader(new FileStream(filename, FileMode.Open, FileAccess.Read));
+                obj = LoadFromString(reader.ReadToEnd());
             }
             catch (FileNotFoundException)
             {

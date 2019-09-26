@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using InSpaceNoOneSeesYourShadow.Engine;
 using InSpaceNoOneSeesYourShadow.Engine.Abstractions;
 using InSpaceNoOneSeesYourShadow.Engine.ContentManagement;
 using InSpaceNoOneSeesYourShadow.Engine.Core;
-using InSpaceNoOneSeesYourShadow.Engine.Extensions;
 using InSpaceNoOneSeesYourShadow.Engine.Objects3D;
 using InSpaceNoOneSeesYourShadow.Engine.Objects3D.Shapes;
 using OpenTK;
@@ -17,7 +14,9 @@ namespace InSpaceNoOneSeesYourShadow.Logic
     {
         public override void CreateScene()
         {
-            GameObject cubePlane = new GameObject(new Vector3(0f, 0f, 0f), new Vector3(MathHelper.PiOver2, 0, 0f), Vector3.One, ModelLoader.LoadFromFile("_Resources/Models/simple_cube.obj"));
+            GameObject cubePlane = new GameObject(new Vector3(0f, 0f, 0f), 
+                new Vector3(MathHelper.PiOver2, 0, 0f), 
+                "_Resources/Models/simple_cube.obj");
             cubePlane.Model.TextureId = GameManager.Textures["galaxy.png"];
             cubePlane.Transform.Position += new Vector3(0f, 0f, 0f);
             cubePlane.Transform.Rotation = new Vector3(MathHelper.PiOver2, 0, 0f);
@@ -35,7 +34,10 @@ namespace InSpaceNoOneSeesYourShadow.Logic
             cubePlane.Model.VolumeShader = GameManager.Shaders[GameManager.ActiveShader];
             cubePlane.Model.Bind();
 
-            GameObject playerShip = new GameObject(new Vector3(0f, -40f, -10f), new Vector3(-MathHelper.PiOver2, 0, 0), new Vector3(0.05f, 0.05f, 0.05f), ModelLoader.LoadFromFile("_Resources/Models/ship2.obj"));
+            GameObject playerShip = new GameObject(new Vector3(0f, -40f, -10f),
+                new Vector3(-MathHelper.PiOver2, 0, 0),
+                new Vector3(0.05f, 0.05f, 0.05f), 
+                "_Resources/Models/ship2.obj");
             playerShip.Model.Material = new Material(new Vector3(1), new Vector3(1), new Vector3(0.8f));
             playerShip.Model.TextureId = GameManager.Textures["ship2_diffuse.bmp"];
             playerShip.Model.PbrValues = new Model.PBRValues

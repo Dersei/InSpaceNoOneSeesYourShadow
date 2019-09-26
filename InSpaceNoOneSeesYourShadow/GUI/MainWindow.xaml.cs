@@ -1,28 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Media;
-using System.Windows.Threading;
-using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using Color = System.Drawing.Color;
-using ButtonState = OpenTK.Input.ButtonState;
-using OpenTK.Graphics;
 using System.Windows;
 using InSpaceNoOneSeesYourShadow.Logic;
 
 namespace InSpaceNoOneSeesYourShadow.GUI
 {
-    /// <summary>
-    /// Logika interakcji dla klasy MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         private bool _canDraw;
-
-        private DispatcherTimer _timer;
 
         private readonly Game _game = new Game();
 
@@ -92,17 +81,9 @@ namespace InSpaceNoOneSeesYourShadow.GUI
 
         private void WindowsFormsHost_Initialized(object sender, EventArgs e)
         {
-            MouseState state = Mouse.GetState();
-            MouseButton mb = MouseButton.Button1;
+            _ = Mouse.GetState(); //Necessary to prevent crashes later
             GLCanvas.MakeCurrent();
-            _timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(1) };
-            _timer.Tick += (s, args) =>
-            {
-
-                //_timer.Start();
-            };
             CompositionTarget.Rendering += CompositionTarget_Rendering;
-            //_timer.Start();
         }
 
         private void CompositionTarget_Rendering(object sender, EventArgs e)

@@ -28,7 +28,7 @@ namespace InSpaceNoOneSeesYourShadow.Engine.ContentManagement
             {
                 return result;
             }
-            var bitmap = new Bitmap(filename);
+            using var bitmap = new Bitmap(filename);
             var id = GL.GenTexture();
             var bmpData = bitmap.LockBits(
                 new Rectangle(0, 0, bitmap.Width, bitmap.Height),

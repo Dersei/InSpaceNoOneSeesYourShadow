@@ -20,7 +20,7 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Helpers
 
         public static Texture2D LoadTexture(string path)
         {
-            Bitmap bitmap = new Bitmap(path);
+            using var bitmap = new Bitmap(path);
             var id = GL.GenTexture();
             BitmapData bmpData = bitmap.LockBits(
                 new Rectangle(0, 0, bitmap.Width, bitmap.Height),
