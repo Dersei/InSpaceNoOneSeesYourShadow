@@ -1,4 +1,5 @@
-﻿using InSpaceNoOneSeesYourShadow.Engine.Core;
+﻿using InSpaceNoOneSeesYourShadow.Engine;
+using InSpaceNoOneSeesYourShadow.Engine.Core;
 using OpenTK;
 using OpenTK.Input;
 

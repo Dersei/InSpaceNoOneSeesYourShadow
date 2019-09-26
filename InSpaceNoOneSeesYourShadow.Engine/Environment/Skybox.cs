@@ -7,7 +7,7 @@ using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using PixelFormat = OpenTK.Graphics.OpenGL4.PixelFormat;
 
-namespace InSpaceNoOneSeesYourShadow.Engine.Helpers
+namespace InSpaceNoOneSeesYourShadow.Engine.Environment
 {
     public class Skybox
     {

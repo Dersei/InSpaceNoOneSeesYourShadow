@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using InSpaceNoOneSeesYourShadow.Engine;
 using InSpaceNoOneSeesYourShadow.Engine.ContentManagement;
 using InSpaceNoOneSeesYourShadow.Engine.Core;
 using InSpaceNoOneSeesYourShadow.Engine.Objects3D;

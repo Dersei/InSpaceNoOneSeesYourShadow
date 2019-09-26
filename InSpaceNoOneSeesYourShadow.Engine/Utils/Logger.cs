@@ -21,7 +21,7 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Utils
         [Conditional("DEBUG")]
         public static void LogFile(string message, [CallerMemberName] string memberName = "")
         {
-            File.AppendAllText(LogFileName, CreateMessage(message, memberName) + Environment.NewLine);
+            File.AppendAllText(LogFileName, CreateMessage(message, memberName) + System.Environment.NewLine);
         }
 
         [Conditional("DEBUG")]

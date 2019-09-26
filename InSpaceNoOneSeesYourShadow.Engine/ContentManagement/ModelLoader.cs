@@ -9,7 +9,7 @@ using OpenTK;
 
 namespace InSpaceNoOneSeesYourShadow.Engine.ContentManagement
 {
-    internal static class ModelLoader
+    public static class ModelLoader
     {
         private static readonly Dictionary<string, Model> Cache = new Dictionary<string, Model>();
 

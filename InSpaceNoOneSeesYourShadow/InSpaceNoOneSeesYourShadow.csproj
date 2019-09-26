@@ -64,11 +64,11 @@
     <StartupObject>InSpaceNoOneSeesYourShadow.App</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="OpenTK, Version=3.0.1.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <HintPath>..\packages\OpenTK.3.0.1\lib\net20\OpenTK.dll</HintPath>
+    <Reference Include="OpenTK, Version=3.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenTK.3.1.0\lib\net20\OpenTK.dll</HintPath>
     </Reference>
-    <Reference Include="OpenTK.GLControl, Version=3.0.1.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <HintPath>..\packages\OpenTK.GLControl.3.0.1\lib\net20\OpenTK.GLControl.dll</HintPath>
+    <Reference Include="OpenTK.GLControl, Version=3.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenTK.GLControl.3.1.0\lib\net20\OpenTK.GLControl.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -94,36 +94,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Engine\Basic.cs" />
-    <Compile Include="Engine\ContentManagement\MaterialLoader.cs" />
-    <Compile Include="Engine\ContentManagement\ModelLoader.cs" />
-    <Compile Include="Engine\ContentManagement\Texture2DLoader.cs" />
-    <Compile Include="Engine\Core\Component.cs" />
-    <Compile Include="Engine\Extensions\QuaternionExtensions.cs" />
-    <Compile Include="Engine\Extensions\RandomExtensions.cs" />
-    <Compile Include="Engine\Extensions\VariousExtensions.cs" />
-    <Compile Include="Engine\Abstractions\ICloneable.cs" />
-    <Compile Include="Engine\Abstractions\Scene.cs" />
-    <Compile Include="Engine\Shaders\LitShader.cs" />
-    <Compile Include="Engine\Shaders\PBRShader.cs" />
-    <Compile Include="GameManager.cs" />
-    <Compile Include="Engine\Core\GameObject.cs" />
-    <Compile Include="Engine\Cameras\Camera.cs" />
-    <Compile Include="Engine\Utils\ImageLoader.cs" />
-    <Compile Include="Engine\Helpers\Skybox.cs" />
     <Compile Include="Logic\EnemyComponent.cs" />
     <Compile Include="Logic\Game.cs" />
-    <Compile Include="Engine\Objects3D\Material.cs" />
-    <Compile Include="Engine\Objects3D\Shapes\Model.cs" />
-    <Compile Include="Engine\Cameras\BasicCamera.cs" />
-    <Compile Include="Engine\Cameras\GameCamera.cs" />
-    <Compile Include="Engine\Helpers\Light.cs" />
-    <Compile Include="Engine\Shaders\ShaderProgram.cs" />
-    <Compile Include="Engine\Helpers\Texture2D.cs" />
-    <Compile Include="Engine\Utils\TextUtils.cs" />
-    <Compile Include="Engine\Cameras\TutorialCamera.cs" />
-    <Compile Include="Engine\Utils\Logger.cs" />
-    <Compile Include="Engine\Core\Transform.cs" />
     <Page Include="GUI\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -179,32 +151,16 @@
     <None Include="_Resources\Models\simple_cube.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="_Resources\Shaders\fs_lit.glsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="_Resources\Shaders\PBR.glsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="_Resources\Shaders\Skybox\skybox.frag">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="_Resources\Shaders\Skybox\skybox.vert">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="_Resources\Shaders\Skybox\skybox_reflect.frag">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="_Resources\Shaders\Skybox\skybox_reflect.vert">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="_Resources\Shaders\vs_lit.glsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\InSpaceNoOneSeesYourShadow.Engine\InSpaceNoOneSeesYourShadow.Engine.csproj">
+      <Project>{f03b9887-cf76-4096-af47-8993e427d53f}</Project>
+      <Name>InSpaceNoOneSeesYourShadow.Engine</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <None Include="_Resources\Textures\galaxy.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

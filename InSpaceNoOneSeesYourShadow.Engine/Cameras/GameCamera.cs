@@ -3,7 +3,7 @@ using OpenTK;
 
 namespace InSpaceNoOneSeesYourShadow.Engine.Cameras
 {
-    internal class GameCamera : Camera
+    public class GameCamera : Camera
     {
         public GameCamera()
         {

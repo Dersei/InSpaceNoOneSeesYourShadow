@@ -3,9 +3,9 @@ using OpenTK;
 
 namespace InSpaceNoOneSeesYourShadow.Engine.Shaders
 {
-    internal class PBRShader : ShaderProgram
+    public class PBRShader : ShaderProgram
     {
-        public PBRShader() : base("_Resources/Shaders/vs_lit.glsl", "_Resources/Shaders/PBR.glsl", true)
+        public PBRShader() : base("_Resources/Shaders/vertex_lit.glsl", "_Resources/Shaders/fragment_PBR.glsl", true)
         {
         }
 

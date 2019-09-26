@@ -1,11 +1,12 @@
-﻿using OpenTK;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using InSpaceNoOneSeesYourShadow.Engine.Abstractions;
 using InSpaceNoOneSeesYourShadow.Engine.Cameras;
+using InSpaceNoOneSeesYourShadow.Engine.Environment;
 using InSpaceNoOneSeesYourShadow.Engine.Helpers;
 using InSpaceNoOneSeesYourShadow.Engine.Shaders;
+using OpenTK;
 
-namespace InSpaceNoOneSeesYourShadow
+namespace InSpaceNoOneSeesYourShadow.Engine
 {
     public static class GameManager
     {

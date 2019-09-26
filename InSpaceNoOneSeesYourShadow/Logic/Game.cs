@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using InSpaceNoOneSeesYourShadow.Engine;
 using InSpaceNoOneSeesYourShadow.Engine.Cameras;
+using InSpaceNoOneSeesYourShadow.Engine.Environment;
 using InSpaceNoOneSeesYourShadow.Engine.Helpers;
 using InSpaceNoOneSeesYourShadow.Engine.Shaders;
 using InSpaceNoOneSeesYourShadow.Engine.Utils;

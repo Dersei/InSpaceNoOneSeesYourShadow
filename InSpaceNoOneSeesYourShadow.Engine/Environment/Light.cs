@@ -1,6 +1,6 @@
 ﻿using OpenTK;
 
-namespace InSpaceNoOneSeesYourShadow.Engine.Helpers
+namespace InSpaceNoOneSeesYourShadow.Engine.Environment
 {
     public class Light
     {
