@@ -58,7 +58,7 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Environment
                 size, -size,  size
             };
 
-            SkyboxShaders = new ShaderProgram("_Resources/Shaders/Skybox/skybox.vert", "_Resources/Shaders/Skybox/skybox.frag", true);
+            SkyboxShaders = new SkyboxShader();
             CreateSkybox();
         }
 

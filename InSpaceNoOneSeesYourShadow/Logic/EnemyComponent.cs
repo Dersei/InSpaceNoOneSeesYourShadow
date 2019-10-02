@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using InSpaceNoOneSeesYourShadow.Engine;
+using InSpaceNoOneSeesYourShadow.Engine.ContentManagement;
 using InSpaceNoOneSeesYourShadow.Engine.Core;
 using InSpaceNoOneSeesYourShadow.Engine.Objects3D;
 using OpenTK;
@@ -26,7 +27,7 @@ namespace InSpaceNoOneSeesYourShadow.Logic
                 new Vector3(-MathHelper.PiOver2, -MathHelper.PiOver2, -MathHelper.PiOver2),
                 "_Resources/Models/cone.obj");
             arrow.ShouldNotRender = true;
-            arrow.Model.TextureId = GameManager.Textures["sun.png"];
+            arrow.Model.Texture = Texture2DLoader.LoadFromFile("_Resources/Textures/sun.png");
             arrow.Model.Material = new Material(new Vector3(0.15f), new Vector3(1), new Vector3(0.2f));
             arrow.Transform.PositionModifier = f => arrow.Transform.Position;
             arrow.Transform.ScaleModifier = f => new Vector3(1f, 1f, 1f);

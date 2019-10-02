@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using InSpaceNoOneSeesYourShadow.Engine.ContentManagement;
-using InSpaceNoOneSeesYourShadow.Engine.Objects3D.Shapes;
+using InSpaceNoOneSeesYourShadow.Engine.Objects3D;
 using OpenTK;
 
 namespace InSpaceNoOneSeesYourShadow.Engine.Core

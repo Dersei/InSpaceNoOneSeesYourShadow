@@ -5,30 +5,30 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Abstractions
 {
     public abstract class Scene
     {
-        protected List<GameObject> _gameObjectsToAdd = new List<GameObject>();
-        protected List<GameObject> _gameObjectsToRemove = new List<GameObject>();
+        protected List<GameObject> GameObjectsToAdd = new List<GameObject>();
+        protected List<GameObject> GameObjectsToRemove = new List<GameObject>();
         protected List<GameObject> _gameObjects = new List<GameObject>();
-        public List<GameObject> GameObjects => _gameObjects;
+        public IReadOnlyList<GameObject> GameObjects => _gameObjects;
         public abstract void CreateScene();
 
         public virtual void Update(float time) => ReorganizeCollections();
         public abstract void Draw();
-        public void AddGameObject(GameObject gameObject) => _gameObjectsToAdd.Add(gameObject);
-        public void RemoveGameObject(GameObject gameObject) => _gameObjectsToRemove.Add(gameObject);
+        public void AddGameObject(GameObject gameObject) => GameObjectsToAdd.Add(gameObject);
+        public void RemoveGameObject(GameObject gameObject) => GameObjectsToRemove.Add(gameObject);
 
         protected void ReorganizeCollections()
         {
-            if (_gameObjectsToAdd.Count == 0 && _gameObjectsToRemove.Count == 0) return;
-            foreach (var newGameObject in _gameObjectsToAdd)
+            if (GameObjectsToAdd.Count == 0 && GameObjectsToRemove.Count == 0) return;
+            foreach (var newGameObject in GameObjectsToAdd)
             {
                 _gameObjects.Add(newGameObject);
             }
-            foreach (var gameObjectToRemove in _gameObjectsToRemove)
+            foreach (var gameObjectToRemove in GameObjectsToRemove)
             {
                 _gameObjects.Remove(gameObjectToRemove);
             }
-            _gameObjectsToAdd.Clear();
-            _gameObjectsToRemove.Clear();
+            GameObjectsToAdd.Clear();
+            GameObjectsToRemove.Clear();
         }
     }
 }
