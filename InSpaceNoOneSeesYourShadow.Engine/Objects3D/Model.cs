@@ -1,53 +1,35 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using InSpaceNoOneSeesYourShadow.Engine.Helpers;
 using InSpaceNoOneSeesYourShadow.Engine.Shaders;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
-namespace InSpaceNoOneSeesYourShadow.Engine.Objects3D.Shapes
+namespace InSpaceNoOneSeesYourShadow.Engine.Objects3D
 {
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct Vertex
-    {
-        public Vector3 Position;
-        public Vector3 Normal;
-        public Vector2 TexCoords;
-    }
-
-    public class Model
+    public partial class Model
     {
         public PBRValues PbrValues { get; set; }
 
-        public struct PBRValues
-        {
-            public float AO { get; set; }
-            public float Metallic { get; set; }
-            public float Roughness { get; set; }
-            public float ReflectionStrength { get; set; }
-            public float Refraction { get; set; }
-        }
-
-        public List<(FaceVertex, FaceVertex, FaceVertex)> Faces { get; } =
+        internal List<(FaceVertex, FaceVertex, FaceVertex)> Faces { get; } =
             new List<(FaceVertex, FaceVertex, FaceVertex)>();
 
-        public int VerticesCount => Faces.Count * 3;
+        private int VerticesCount => Faces.Count * 3;
 
-        public int IndicesCount => Faces.Count * 3;
+        private int IndicesCount => Faces.Count * 3;
 
-        public int ColorDataCount => Faces.Count * 3;
+        private int ColorDataCount => Faces.Count * 3;
 
-        public int TextureCoordsCount => Faces.Count * 3;
+        private int TextureCoordsCount => Faces.Count * 3;
 
-        public List<Vertex> VerticesStruct = new List<Vertex>();
-        public int NormalCount => Faces.Count * 3;
-        public int TextureId { get; set; }
+        private readonly List<Vertex> _verticesStruct = new List<Vertex>();
+        private int NormalCount => Faces.Count * 3;
         public Material Material { get; set; }
+        public Texture2D Texture { get; set; }
 
-        public int VAO;
-        public int VBO;
-        public int EBO;
+        private int _vao;
+        private int _vbo;
+        private int _ebo;
         private ShaderProgram _volumeShader;
 
         public ShaderProgram VolumeShader
@@ -68,29 +50,23 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Objects3D.Shapes
 
             for (var i = 0; i < vertices.Length; i++)
             {
-                VerticesStruct.Add(new Vertex()
-                {
-                    Normal = normals[i],
-                    TexCoords = textureCoords[i],
-                    Position = vertices[i]
-                });
+                _verticesStruct.Add(new Vertex(vertices[i], normals[i], textureCoords[i]));
             }
 
             if (onlyStructs) return;
 
+            _vao = GL.GenVertexArray();
+            _vbo = GL.GenBuffer();
+            _ebo = GL.GenBuffer();
 
-            VAO = GL.GenVertexArray();
-            VBO = GL.GenBuffer();
-            EBO = GL.GenBuffer();
+            GL.BindVertexArray(_vao);
 
-            GL.BindVertexArray(VAO);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, _vbo);
 
-            GL.BindBuffer(BufferTarget.ArrayBuffer, VBO);
-
-            GL.BufferData(BufferTarget.ArrayBuffer, VerticesStruct.Count * sizeof(Vertex), VerticesStruct.ToArray(),
+            GL.BufferData(BufferTarget.ArrayBuffer, _verticesStruct.Count * sizeof(Vertex), _verticesStruct.ToArray(),
                 BufferUsageHint.StaticDraw);
 
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, EBO);
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, _ebo);
             GL.BufferData(BufferTarget.ElementArrayBuffer, GetIndices().Length * sizeof(int), GetIndices(),
                 BufferUsageHint.StaticDraw);
 
@@ -111,7 +87,7 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Objects3D.Shapes
         /// Get vertices for this object
         /// </summary>
         /// <returns></returns>
-        public Vector3[] GetVertices()
+        private Vector3[] GetVertices()
         {
             var vertices = new List<Vector3>();
 
@@ -130,22 +106,21 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Objects3D.Shapes
         /// </summary>
         /// <param name="offset">value to number first vertex in object</param>
         /// <returns>Array of indices offset to match buffered data</returns>
-        public int[] GetIndices(int offset = 0) => Enumerable.Range(offset, IndicesCount).ToArray();
+        private int[] GetIndices(int offset = 0) => Enumerable.Range(offset, IndicesCount).ToArray();
 
         /// <summary>
         /// Get color data.
         /// </summary>
         /// <returns></returns>
-        public Vector3[] GetColorData() => new Vector3[ColorDataCount].ToArray();
+        private Vector3[] GetColorData() => new Vector3[ColorDataCount].ToArray();
 
         /// <summary>
         /// Get texture coordinates
         /// </summary>
         /// <returns></returns>
-        public Vector2[] GetTextureCoords()
+        private Vector2[] GetTextureCoords()
         {
             var coords = new List<Vector2>();
-
             foreach (var face in Faces)
             {
                 coords.Add(face.Item1.TextureCoords);
@@ -157,7 +132,7 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Objects3D.Shapes
         }
 
 
-        public Vector3[] GetNormals()
+        private Vector3[] GetNormals()
         {
             var normals = new List<Vector3>();
 
@@ -176,33 +151,17 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Objects3D.Shapes
             VolumeShader.EnableVertexAttributesArrays();
             GL.UseProgram(VolumeShader.ProgramId);
             GL.ActiveTexture(TextureUnit.Texture0);
-            GL.BindTexture(TextureTarget.Texture2D, TextureId);
+            GL.BindTexture(TextureTarget.Texture2D, Texture.ID);
 
             VolumeShader.Draw();
         }
 
         public void EndDraw()
         {
-            GL.BindVertexArray(VAO);
+            GL.BindVertexArray(_vao);
             GL.DrawElements(PrimitiveType.Triangles, IndicesCount, DrawElementsType.UnsignedInt, 0);
             GL.BindVertexArray(0);
             VolumeShader.DisableVertexAttributesArrays();
         }
-
-        public struct FaceVertex
-        {
-            public Vector3 Position;
-            public Vector3 Normal;
-            public Vector2 TextureCoords;
-
-            public FaceVertex(Vector3 pos, Vector3 norm, Vector2 texCoords)
-            {
-                Position = pos;
-                Normal = norm;
-                TextureCoords = texCoords;
-            }
-        }
     }
-
-   
 }

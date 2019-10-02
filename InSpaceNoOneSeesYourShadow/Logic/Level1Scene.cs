@@ -4,7 +4,6 @@ using InSpaceNoOneSeesYourShadow.Engine.Abstractions;
 using InSpaceNoOneSeesYourShadow.Engine.ContentManagement;
 using InSpaceNoOneSeesYourShadow.Engine.Core;
 using InSpaceNoOneSeesYourShadow.Engine.Objects3D;
-using InSpaceNoOneSeesYourShadow.Engine.Objects3D.Shapes;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
@@ -17,7 +16,7 @@ namespace InSpaceNoOneSeesYourShadow.Logic
             GameObject cubePlane = new GameObject(new Vector3(0f, 0f, 0f), 
                 new Vector3(MathHelper.PiOver2, 0, 0f), 
                 "_Resources/Models/simple_cube.obj");
-            cubePlane.Model.TextureId = GameManager.Textures["galaxy.png"];
+            cubePlane.Model.Texture = Texture2DLoader.LoadFromFile("_Resources/Textures/galaxy.png");
             cubePlane.Transform.Position += new Vector3(0f, 0f, 0f);
             cubePlane.Transform.Rotation = new Vector3(MathHelper.PiOver2, 0, 0f);
             cubePlane.Model.Material = new Material(new Vector3(0.5f), new Vector3(1), new Vector3(0.2f));
@@ -39,7 +38,7 @@ namespace InSpaceNoOneSeesYourShadow.Logic
                 new Vector3(0.05f, 0.05f, 0.05f), 
                 "_Resources/Models/ship2.obj");
             playerShip.Model.Material = new Material(new Vector3(1), new Vector3(1), new Vector3(0.8f));
-            playerShip.Model.TextureId = GameManager.Textures["ship2_diffuse.bmp"];
+            playerShip.Model.Texture = Texture2DLoader.LoadFromFile("_Resources/Textures/ship2_diffuse.bmp");
             playerShip.Model.PbrValues = new Model.PBRValues
             {
                 AO = 1f,
@@ -58,7 +57,7 @@ namespace InSpaceNoOneSeesYourShadow.Logic
                 for (int i = 0; i < 6; i++)
                 {
                     GameObject ship = new GameObject(new Vector3(40f - 15 * i, 20f - 10 * j, 0f), new Vector3(MathHelper.Pi, 0, -MathHelper.PiOver2), Vector3.One, ModelLoader.LoadFromFile("_Resources/Models/ship_dread_t.obj"));
-                    ship.Model.TextureId = GameManager.Textures["dread_ship_t.png"];
+                    ship.Model.Texture = Texture2DLoader.LoadFromFile("_Resources/Textures/dread_ship_t.png");
                     //ship.Transform.Position += new Vector3(40f - 15 * i, 20f - 10 * j, 0f);
                     ship.Transform.PositionModifier = f => ship.Transform.Position + new Vector3((float)Math.Sin(GameManager.Time) / 100f, -GameManager.Time / 1000f, 0);
                     ship.Transform.Rotation = new Vector3(MathHelper.Pi, 0, -MathHelper.PiOver2);

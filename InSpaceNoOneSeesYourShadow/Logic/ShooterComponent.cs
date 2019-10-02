@@ -45,7 +45,7 @@ namespace InSpaceNoOneSeesYourShadow.Logic
             GameObject arrow = new GameObject(GameObject.Transform.Position, 
                 new Vector3(-MathHelper.PiOver2, 0, 0), 
                 "_Resources/Models/arrow.obj");
-            arrow.Model.TextureId = GameManager.Textures["sun.png"];
+            arrow.Model.Texture = Texture2DLoader.LoadFromFile("_Resources/Textures/sun.png");
             arrow.Model.Material = new Material(new Vector3(0.15f), new Vector3(1), new Vector3(0.2f));
             arrow.Transform.PositionModifier = f => arrow.Transform.Position + new Vector3(0, 0.2f, 0);
             arrow.Transform.ScaleModifier = f => new Vector3(1f, 1f, 1f);

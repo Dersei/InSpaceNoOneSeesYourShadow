@@ -20,6 +20,11 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Extensions
         {
             return source?.IndexOf(toCheck, comp) >= 0;
         }
+
+        public static string SafeSubstring(this string @this, int endIndex)
+        {
+            return @this.Substring(0, Math.Min(endIndex, @this.Length));
+        }
     }
 
 }

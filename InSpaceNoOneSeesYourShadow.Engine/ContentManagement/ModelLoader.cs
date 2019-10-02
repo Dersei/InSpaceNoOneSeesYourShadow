@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using InSpaceNoOneSeesYourShadow.Engine.Objects3D.Shapes;
+using InSpaceNoOneSeesYourShadow.Engine.Objects3D;
 using InSpaceNoOneSeesYourShadow.Engine.Utils;
 using OpenTK;
 
@@ -57,12 +57,12 @@ namespace InSpaceNoOneSeesYourShadow.Engine.ContentManagement
         }
 
 
-        private static Model LoadFromString(string obj)
+        private static Model LoadFromString(string text)
         {
             const NumberStyles style = NumberStyles.Number;
             var culture = CultureInfo.CreateSpecificCulture("en-GB");
             // Separate lines from the file
-            var lines = new List<string>(obj.Split('\n'));
+            var lines = new List<string>(text.Split('\n'));
 
             // Lists to hold model data
             var vertices = new List<Vector3>();
