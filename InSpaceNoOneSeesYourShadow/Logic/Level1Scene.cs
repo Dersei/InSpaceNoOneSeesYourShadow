@@ -49,8 +49,8 @@ namespace InSpaceNoOneSeesYourShadow.Logic
             };
             playerShip.Model.VolumeShader = GameManager.Shaders["light"];
             playerShip.Model.Bind();
-            playerShip.AddComponent(new PlayerComponent());
-            playerShip.AddComponent(new ShooterComponent());
+            playerShip.AddComponent<PlayerComponent>();
+            playerShip.AddComponent<ShooterComponent>();
 
             for (int j = 0; j < 3; j++)
             {

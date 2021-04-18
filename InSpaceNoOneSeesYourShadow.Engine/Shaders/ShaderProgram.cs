@@ -171,14 +171,7 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Shaders
             return _buffers.ContainsKey(name) ? _buffers[name] : 0;
         }
 
-
-        public int LoadGeometryShader(string shader)
-        {
-            LoadShaderFromFile(shader, ShaderType.GeometryShader);
-            return _geometryShaderId;
-        }
-
-        protected ShaderProgram(string vertexShader, string fragmentShader, string geometryShader, bool fromFile = false)
+        protected ShaderProgram(string vertexShader, string fragmentShader, string geometryShader, bool fromFile = true)
         {
             ProgramId = GL.CreateProgram();
 
@@ -199,7 +192,7 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Shaders
             GenBuffers();
         }
 
-        protected ShaderProgram(string vertexShader, string fragmentShader, bool fromFile = false)
+        protected ShaderProgram(string vertexShader, string fragmentShader, bool fromFile = true)
         {
             ProgramId = GL.CreateProgram();
 

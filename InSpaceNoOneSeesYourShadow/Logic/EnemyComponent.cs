@@ -82,7 +82,6 @@ namespace InSpaceNoOneSeesYourShadow.Logic
             {
                 _cachedEnemyProjectiles.Add(CreateEnemyProjectile());
             }
-
         }
     }
 }

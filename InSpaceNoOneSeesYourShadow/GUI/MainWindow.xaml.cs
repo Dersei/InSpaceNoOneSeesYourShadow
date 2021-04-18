@@ -9,7 +9,7 @@ using InSpaceNoOneSeesYourShadow.Logic;
 
 namespace InSpaceNoOneSeesYourShadow.GUI
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
         private bool _canDraw;
 

@@ -16,12 +16,6 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Core
 
         public List<Component> Components { get; } = new List<Component>();
 
-        public void AddComponent(Component component)
-        {
-            Components.Add(component);
-            component.GameObject = this;
-        }
-
         public void AddComponent<T>() where T : Component, new()
         {
             var component = new T();

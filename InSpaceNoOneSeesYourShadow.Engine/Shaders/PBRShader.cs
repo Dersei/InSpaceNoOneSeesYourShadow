@@ -5,7 +5,7 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Shaders
 {
     public class PBRShader : ShaderProgram
     {
-        public PBRShader() : base("_Resources/Shaders/vertex_lit.glsl", "_Resources/Shaders/fragment_PBR.glsl", true)
+        public PBRShader() : base("_Resources/Shaders/vertex_lit.glsl", "_Resources/Shaders/fragment_PBR.glsl")
         {
         }
 
