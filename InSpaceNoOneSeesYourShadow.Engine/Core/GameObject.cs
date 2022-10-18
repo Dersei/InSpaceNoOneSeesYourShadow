@@ -2,7 +2,7 @@
 using System.Linq;
 using InSpaceNoOneSeesYourShadow.Engine.ContentManagement;
 using InSpaceNoOneSeesYourShadow.Engine.Objects3D;
-using OpenTK;
+using OpenTK.Mathematics;
 
 namespace InSpaceNoOneSeesYourShadow.Engine.Core
 {
@@ -14,7 +14,7 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Core
         public bool Enabled;
         private bool _isInGame;
 
-        public List<Component> Components { get; } = new List<Component>();
+        public List<Component> Components { get; } = new();
 
         public void AddComponent<T>() where T : Component, new()
         {

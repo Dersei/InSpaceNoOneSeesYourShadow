@@ -5,19 +5,19 @@ using InSpaceNoOneSeesYourShadow.Engine.Cameras;
 using InSpaceNoOneSeesYourShadow.Engine.Environment;
 using InSpaceNoOneSeesYourShadow.Engine.Shaders;
 using InSpaceNoOneSeesYourShadow.Engine.Utils;
-using OpenTK;
+using OpenTK.Mathematics;
 
 namespace InSpaceNoOneSeesYourShadow.Logic
 {
     internal class Game
     {
-        public GameCamera Camera { get; } = new GameCamera();
-        private readonly Light _directionalLight = new Light(-Vector3.UnitZ, new Vector3(1f, 0.5f, 0.5f));
-        private readonly Light _spotLight1 = new Light(new Vector3(1, 5, 1), new Vector3(1f, 1f, 1f));
-        private readonly Light _spotLight2 = new Light(new Vector3(5, 10, 0), new Vector3(0.8f, 0.8f, 0f));
-        private readonly Light _pointLight = new Light(new Vector3(1, 5, 1), new Vector3(1f, 0f, 0f));
-        private readonly Dictionary<string, int> _textures = new Dictionary<string, int>();
-        private readonly Dictionary<string, ShaderProgram> _shaders = new Dictionary<string, ShaderProgram>();
+        public GameCamera Camera { get; } = new();
+        private readonly Light _directionalLight = new(-Vector3.UnitZ, new Vector3(1f, 0.5f, 0.5f));
+        private readonly Light _spotLight1 = new(new Vector3(1, 5, 1), new Vector3(1f, 1f, 1f));
+        private readonly Light _spotLight2 = new(new Vector3(5, 10, 0), new Vector3(0.8f, 0.8f, 0f));
+        private readonly Light _pointLight = new(new Vector3(1, 5, 1), new Vector3(1f, 0f, 0f));
+        private readonly Dictionary<string, int> _textures = new();
+        private readonly Dictionary<string, ShaderProgram> _shaders = new();
         private string _activeShader = "light";
 
         private DateTime _oldTime;
@@ -33,7 +33,7 @@ namespace InSpaceNoOneSeesYourShadow.Logic
         public void InitProgram()
         {
             _shaders.Add("light", new LitShader());
-            _shaders.Add("PBR", new PBRShader());
+            _shaders.Add("PBR", new PbrShader());
             GameManager.Shaders = _shaders;
             _activeShader = "PBR";
             _textures.Add("sun.png", ImageLoader.LoadImage("_Resources/Textures/sun.png"));

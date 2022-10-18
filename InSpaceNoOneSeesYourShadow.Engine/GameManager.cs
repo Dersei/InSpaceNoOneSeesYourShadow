@@ -2,9 +2,8 @@
 using InSpaceNoOneSeesYourShadow.Engine.Abstractions;
 using InSpaceNoOneSeesYourShadow.Engine.Cameras;
 using InSpaceNoOneSeesYourShadow.Engine.Environment;
-using InSpaceNoOneSeesYourShadow.Engine.Helpers;
 using InSpaceNoOneSeesYourShadow.Engine.Shaders;
-using OpenTK;
+using OpenTK.Mathematics;
 
 namespace InSpaceNoOneSeesYourShadow.Engine
 {

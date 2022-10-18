@@ -1,22 +1,22 @@
 ﻿using System;
-using OpenTK;
+using OpenTK.Mathematics;
 
 namespace InSpaceNoOneSeesYourShadow.Engine.Shaders
 {
-    public class PBRShader : ShaderProgram
+    public class PbrShader : ShaderProgram
     {
-        public PBRShader() : base("_Resources/Shaders/vertex_lit.glsl", "_Resources/Shaders/fragment_PBR.glsl")
+        public PbrShader() : base("_Resources/Shaders/vertex_lit.glsl", "_Resources/Shaders/fragment_PBR.glsl")
         {
         }
 
         public override void Draw()
         {
             base.Draw();
-            Model.VolumeShader.SetUniform("ao", Model.PbrValues.AO);
-            Model.VolumeShader.SetUniform("metallic", Model.PbrValues.Metallic);
-            Model.VolumeShader.SetUniform("roughness", Model.PbrValues.Roughness);
-            Model.VolumeShader.SetUniform("reflectionStrength", Model.PbrValues.ReflectionStrength);
-            Model.VolumeShader.SetUniform("refraction", Model.PbrValues.Refraction);
+            Model.VolumeShader.SetUniform("ao", Model.Pbr.Ao);
+            Model.VolumeShader.SetUniform("metallic", Model.Pbr.Metallic);
+            Model.VolumeShader.SetUniform("roughness", Model.Pbr.Roughness);
+            Model.VolumeShader.SetUniform("reflectionStrength", Model.Pbr.ReflectionStrength);
+            Model.VolumeShader.SetUniform("refraction", Model.Pbr.Refraction);
             Model.VolumeShader.SetUniform("dirLight.direction", GameManager.DirectionalLight.Position);
             Model.VolumeShader.SetUniform("dirLight.color", GameManager.DirectionalLight.Color);
             Model.VolumeShader.SetUniform("dirLight.lightStrength", 10f);

@@ -16,14 +16,14 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Extensions
             return Math.Abs(value - @this) < Math.Max(1E-06 * Math.Max(Math.Abs(@this), Math.Abs(value)), epsilon * precisionMultiplier);
         }
 
-        public static bool Contains(this string source, string toCheck, StringComparison comp)
+        public static bool Contains(this string? source, string toCheck, StringComparison comp)
         {
             return source?.IndexOf(toCheck, comp) >= 0;
         }
 
-        public static string SafeSubstring(this string @this, int endIndex)
+        public static string? SafeSubstring(this string? @this, int endIndex)
         {
-            return @this.Substring(0, Math.Min(endIndex, @this.Length));
+            return @this?[..Math.Min(endIndex, @this.Length)];
         }
     }
 

@@ -5,15 +5,15 @@ using InSpaceNoOneSeesYourShadow.Engine;
 using InSpaceNoOneSeesYourShadow.Engine.ContentManagement;
 using InSpaceNoOneSeesYourShadow.Engine.Core;
 using InSpaceNoOneSeesYourShadow.Engine.Objects3D;
-using OpenTK;
+using OpenTK.Mathematics;
 
 namespace InSpaceNoOneSeesYourShadow.Logic
 {
     internal class EnemyComponent : Component
     {
-        private readonly List<GameObject> _cachedEnemyProjectiles = new List<GameObject>();
-        private readonly List<GameObject> _activeEnemyProjectiles = new List<GameObject>();
-        private readonly int _maxProjectiles = 3;
+        private readonly List<GameObject> _cachedEnemyProjectiles = new();
+        private readonly List<GameObject> _activeEnemyProjectiles = new();
+        private const int MaxProjectiles = 3;
 
         public override void Update(float time)
         {
@@ -23,14 +23,14 @@ namespace InSpaceNoOneSeesYourShadow.Logic
 
         private static GameObject CreateEnemyProjectile()
         {
-            GameObject arrow = new GameObject(Vector3.Zero,
+            var arrow = new GameObject(Vector3.Zero,
                 new Vector3(-MathHelper.PiOver2, -MathHelper.PiOver2, -MathHelper.PiOver2),
                 "_Resources/Models/cone.obj");
             arrow.ShouldNotRender = true;
             arrow.Model.Texture = Texture2DLoader.LoadFromFile("_Resources/Textures/sun.png");
             arrow.Model.Material = new Material(new Vector3(0.15f), new Vector3(1), new Vector3(0.2f));
-            arrow.Transform.PositionModifier = f => arrow.Transform.Position;
-            arrow.Transform.ScaleModifier = f => new Vector3(1f, 1f, 1f);
+            arrow.Transform.PositionModifier = _ => arrow.Transform.Position;
+            arrow.Transform.ScaleModifier = _ => new Vector3(1f, 1f, 1f);
             arrow.Model.VolumeShader = GameManager.Shaders["light"];
             arrow.Model.Bind();
             return arrow;
@@ -39,7 +39,7 @@ namespace InSpaceNoOneSeesYourShadow.Logic
         public void SpawnEnemyProjectiles()
         {
             var chance = Basic.Random.Next(0, 1000);
-            if (chance > 5 || _activeEnemyProjectiles.Count > _maxProjectiles)
+            if (chance > 5 || _activeEnemyProjectiles.Count > MaxProjectiles)
             {
                 return;
             }
@@ -47,7 +47,7 @@ namespace InSpaceNoOneSeesYourShadow.Logic
             if (arrow is null) return;
             arrow.ShouldNotRender = false;
             arrow.Transform.Position = GameObject.Transform.Position + new Vector3(0, 1, 0);
-            arrow.Transform.PositionModifier = f => arrow.Transform.Position - new Vector3(0, 0.2f, 0);
+            arrow.Transform.PositionModifier = _ => arrow.Transform.Position - new Vector3(0, 0.2f, 0);
             _activeEnemyProjectiles.Add(arrow);
         }
 

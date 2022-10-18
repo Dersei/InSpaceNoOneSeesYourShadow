@@ -4,8 +4,8 @@ using System.IO;
 using System.Linq;
 using InSpaceNoOneSeesYourShadow.Engine.Objects3D;
 using InSpaceNoOneSeesYourShadow.Engine.Utils;
-using OpenTK;
 using OpenTK.Graphics.OpenGL4;
+using OpenTK.Mathematics;
 
 namespace InSpaceNoOneSeesYourShadow.Engine.Shaders
 {
@@ -34,9 +34,9 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Shaders
         private int _attributeCount;
         private int _uniformCount;
 
-        private readonly Dictionary<string, AttributeInfo> _attributes = new Dictionary<string, AttributeInfo>();
-        private readonly Dictionary<string, UniformInfo> _uniforms = new Dictionary<string, UniformInfo>();
-        private readonly Dictionary<string, uint> _buffers = new Dictionary<string, uint>();
+        private readonly Dictionary<string, AttributeInfo> _attributes = new();
+        private readonly Dictionary<string, UniformInfo> _uniforms = new();
+        private readonly Dictionary<string, uint> _buffers = new();
         public Model Model;
 
         private void LoadShader(string code, ShaderType type, out int address)

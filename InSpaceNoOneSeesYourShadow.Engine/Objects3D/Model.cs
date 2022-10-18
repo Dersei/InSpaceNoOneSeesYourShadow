@@ -2,17 +2,16 @@
 using System.Linq;
 using InSpaceNoOneSeesYourShadow.Engine.Helpers;
 using InSpaceNoOneSeesYourShadow.Engine.Shaders;
-using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 
 namespace InSpaceNoOneSeesYourShadow.Engine.Objects3D
 {
     public partial class Model
     {
-        public PBRValues PbrValues { get; set; }
+        public PbrValues Pbr { get; set; }
 
-        internal List<(FaceVertex, FaceVertex, FaceVertex)> Faces { get; } =
-            new List<(FaceVertex, FaceVertex, FaceVertex)>();
+        internal List<(FaceVertex, FaceVertex, FaceVertex)> Faces { get; } = new();
 
         private int VerticesCount => Faces.Count * 3;
 
@@ -22,10 +21,10 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Objects3D
 
         private int TextureCoordsCount => Faces.Count * 3;
 
-        private readonly List<Vertex> _verticesStruct = new List<Vertex>();
+        private readonly List<Vertex> _verticesStruct = new();
         private int NormalCount => Faces.Count * 3;
-        public Material Material { get; set; }
-        public Texture2D Texture { get; set; }
+        public Material? Material { get; set; }
+        public Texture2D? Texture { get; set; }
 
         private int _vao;
         private int _vbo;

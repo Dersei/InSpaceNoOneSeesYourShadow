@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using OpenTK;
+using OpenTK.Mathematics;
 
 namespace InSpaceNoOneSeesYourShadow.Engine.Extensions
 {
     public static class RandomExtensions
     {
-        public static T RandomItem<T>(this List<T> @this)
+        public static T? RandomItem<T>(this List<T> @this)
         {
             if (@this.Count == 0)
                 return default;
@@ -15,7 +15,7 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Extensions
             return @this[index];
         }
 
-        public static T RandomItem<T>(this List<T> @this, Random random)
+        public static T? RandomItem<T>(this List<T> @this, Random random)
         {
             if (@this.Count == 0)
                 return default;
@@ -24,7 +24,7 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Extensions
         }
 
 
-        public static T RandomItem<T>(this T[] @this)
+        public static T? RandomItem<T>(this T[] @this)
         {
             if (@this.Length == 0)
                 return default;
@@ -32,7 +32,7 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Extensions
             return @this[index];
         }
 
-        public static T RandomItem<T>(this T[] @this, Random random)
+        public static T? RandomItem<T>(this T[] @this, Random random)
         {
             if (@this.Length == 0)
                 return default;
@@ -40,7 +40,7 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Extensions
             return @this[index];
         }
 
-        public static T RandomItem<T>(this IEnumerable<T> @this)
+        public static T? RandomItem<T>(this IEnumerable<T> @this)
         {
             if (@this is List<T> list)
             {
@@ -60,7 +60,7 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Extensions
             return iterated[index];
         }
 
-        public static T2 RandomItem<T1, T2>(this Dictionary<T1, T2> @this)
+        public static T2? RandomItem<T1, T2>(this Dictionary<T1, T2> @this) where T1 : notnull
         {
             if (@this.Count == 0)
                 return default;

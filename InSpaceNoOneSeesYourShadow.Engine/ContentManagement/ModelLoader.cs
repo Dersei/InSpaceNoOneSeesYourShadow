@@ -1,28 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using InSpaceNoOneSeesYourShadow.Engine.Objects3D;
 using InSpaceNoOneSeesYourShadow.Engine.Utils;
-using OpenTK;
+using OpenTK.Mathematics;
 
 namespace InSpaceNoOneSeesYourShadow.Engine.ContentManagement
 {
     public static class ModelLoader
     {
-        private static readonly Dictionary<string, Model> Cache = new Dictionary<string, Model>();
-
-        private static bool CheckIfCached(string name, out Model obj)
+        private static readonly Dictionary<string, Model> Cache = new();
+        
+        private static bool CheckIfCached(string name, [NotNullWhen(true)]out Model? obj)
         {
-            if (Cache.ContainsKey(name))
-            {
-                obj = Cache[name];
-                return true;
-            }
-
-            obj = default;
-            return false;
+            return Cache.TryGetValue(name, out obj);
         }
         /// <summary>
         /// Loads a model from a file.
@@ -67,12 +61,12 @@ namespace InSpaceNoOneSeesYourShadow.Engine.ContentManagement
             // Lists to hold model data
             var vertices = new List<Vector3>();
             var normals = new List<Vector3>();
-            var texs = new List<Vector2>();
+            var textures = new List<Vector2>();
             var faces = new List<(TempVertex, TempVertex, TempVertex)>();
 
             // Base values
             vertices.Add(new Vector3());
-            texs.Add(new Vector2());
+            textures.Add(new Vector2());
             normals.Add(new Vector3());
 
             // Read file line by line
@@ -81,18 +75,18 @@ namespace InSpaceNoOneSeesYourShadow.Engine.ContentManagement
                 if (line.StartsWith("v ")) // Vertex definition
                 {
                     // Cut off beginning of line
-                    var temp = line.Substring(2);
+                    var temp = line[2..];
 
                     var vec = new Vector3();
 
                     if (temp.Trim().Count(c => c == ' ') == 2) // Check if there's enough elements for a vertex
                     {
-                        var vertparts = temp.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        var vertParts = temp.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
                         // Attempt to parse each part of the vertice
-                        var success = float.TryParse(vertparts[0], style, culture, out vec.X);
-                        success |= float.TryParse(vertparts[1], style, culture, out vec.Y);
-                        success |= float.TryParse(vertparts[2], style, culture, out vec.Z);
+                        var success = float.TryParse(vertParts[0], style, culture, out vec.X);
+                        success |= float.TryParse(vertParts[1], style, culture, out vec.Y);
+                        success |= float.TryParse(vertParts[2], style, culture, out vec.Z);
 
                         // If any of the parses failed, report the error
                         if (!success)
@@ -110,17 +104,17 @@ namespace InSpaceNoOneSeesYourShadow.Engine.ContentManagement
                 else if (line.StartsWith("vt ")) // Texture coordinate
                 {
                     // Cut off beginning of line
-                    var temp = line.Substring(2);
+                    var temp = line[2..];
 
                     var vec = new Vector2();
 
-                    if (temp.Trim().Count(c => c == ' ') > 0) // Check if there's enough elements for a vertex
+                    if (temp.Trim().Any(c => c == ' ')) // Check if there's enough elements for a vertex
                     {
-                        var texcoordparts = temp.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        var texCoordParts = temp.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
                         // Attempt to parse each part of the vertice
-                        var success = float.TryParse(texcoordparts[0], style, culture, out vec.X);
-                        success |= float.TryParse(texcoordparts[1], style, culture, out vec.Y);
+                        var success = float.TryParse(texCoordParts[0], style, culture, out vec.X);
+                        success |= float.TryParse(texCoordParts[1], style, culture, out vec.Y);
 
                         // If any of the parses failed, report the error
                         if (!success)
@@ -133,23 +127,23 @@ namespace InSpaceNoOneSeesYourShadow.Engine.ContentManagement
                         Logger.LogConsole($"Error parsing texture coordinate: {line}");
                     }
 
-                    texs.Add(vec);
+                    textures.Add(vec);
                 }
                 else if (line.StartsWith("vn ")) // Normal vector
                 {
                     // Cut off beginning of line
-                    var temp = line.Substring(2);
+                    var temp = line[2..];
 
                     var vec = new Vector3();
 
                     if (temp.Trim().Count(c => c == ' ') == 2) // Check if there's enough elements for a normal
                     {
-                        var vertparts = temp.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        var vertParts = temp.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
                         // Attempt to parse each part of the vertice
-                        var success = float.TryParse(vertparts[0], style, culture, out vec.X);
-                        success |= float.TryParse(vertparts[1], style, culture, out vec.Y);
-                        success |= float.TryParse(vertparts[2], style, culture, out vec.Z);
+                        var success = float.TryParse(vertParts[0], style, culture, out vec.X);
+                        success |= float.TryParse(vertParts[1], style, culture, out vec.Y);
+                        success |= float.TryParse(vertParts[2], style, culture, out vec.Z);
 
                         // If any of the parses failed, report the error
                         if (!success)
@@ -167,7 +161,7 @@ namespace InSpaceNoOneSeesYourShadow.Engine.ContentManagement
                 else if (line.StartsWith("f ")) // Face definition
                 {
                     // Cut off beginning of line
-                    var temp = line.Substring(2);
+                    var temp = line[2..];
 
                     if (temp.Trim().Count(c => c == ' ') == 2) // Check if there's enough elements for a face
                     {
@@ -192,7 +186,7 @@ namespace InSpaceNoOneSeesYourShadow.Engine.ContentManagement
                         }
                         else
                         {
-                            if (texs.Count > v1 && texs.Count > v2 && texs.Count > v3)
+                            if (textures.Count > v1 && textures.Count > v2 && textures.Count > v3)
                             {
                                 t1 = v1;
                                 t2 = v2;
@@ -246,9 +240,9 @@ namespace InSpaceNoOneSeesYourShadow.Engine.ContentManagement
 
             foreach (var face in faces)
             {
-                var v1 = new Model.FaceVertex(vertices[face.Item1.Vertex], normals[face.Item1.Normal], texs[face.Item1.TexCoords]);
-                var v2 = new Model.FaceVertex(vertices[face.Item2.Vertex], normals[face.Item2.Normal], texs[face.Item2.TexCoords]);
-                var v3 = new Model.FaceVertex(vertices[face.Item3.Vertex], normals[face.Item3.Normal], texs[face.Item3.TexCoords]);
+                var v1 = new Model.FaceVertex(vertices[face.Item1.Vertex], normals[face.Item1.Normal], textures[face.Item1.TexCoords]);
+                var v2 = new Model.FaceVertex(vertices[face.Item2.Vertex], normals[face.Item2.Normal], textures[face.Item2.TexCoords]);
+                var v3 = new Model.FaceVertex(vertices[face.Item3.Vertex], normals[face.Item3.Normal], textures[face.Item3.TexCoords]);
 
                 vol.Faces.Add((v1, v2, v3));
             }

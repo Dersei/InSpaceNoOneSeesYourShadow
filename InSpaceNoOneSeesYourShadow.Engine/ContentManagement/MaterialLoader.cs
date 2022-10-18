@@ -1,28 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using InSpaceNoOneSeesYourShadow.Engine.Objects3D;
 using InSpaceNoOneSeesYourShadow.Engine.Utils;
-using OpenTK;
+using OpenTK.Mathematics;
 
 namespace InSpaceNoOneSeesYourShadow.Engine.ContentManagement
 {
     internal static class MaterialLoader
     {
-        private static readonly Dictionary<string, Dictionary<string, Material>> Cache = new Dictionary<string, Dictionary<string, Material>>();
+        private static readonly Dictionary<string, Dictionary<string, Material>> Cache = new();
 
-        private static bool CheckIfCached(string name, out Dictionary<string, Material> obj)
+        private static bool CheckIfCached(string name, [NotNullWhen(true)]out Dictionary<string, Material>? obj)
         {
-            if (Cache.ContainsKey(name))
-            {
-                obj = Cache[name];
-                return true;
-            }
-
-            obj = default;
-            return false;
+            return Cache.TryGetValue(name, out obj);
         }
 
 
@@ -66,7 +60,7 @@ namespace InSpaceNoOneSeesYourShadow.Engine.ContentManagement
                 }
 
                 // Add final material
-                if (currentMaterial.Count(c => c == '\n') > 0)
+                if (currentMaterial.Any(c => c == '\n'))
                 {
                     var newMaterial = LoadFromString(currentMaterial, out var newMaterialName);
 
@@ -82,6 +76,8 @@ namespace InSpaceNoOneSeesYourShadow.Engine.ContentManagement
                 Logger.LogConsole($"Error loading file: {filename}");
             }
 
+            Cache.Add(filename, mats);
+            
             return mats;
         }
 
@@ -125,7 +121,7 @@ namespace InSpaceNoOneSeesYourShadow.Engine.ContentManagement
             if (lines.Count != 0)
             {
                 // Get name from first line
-                name = lines[0].Substring("newmtl ".Length);
+                name = lines[0]["newmtl ".Length..];
             }
 
             // Remove leading whitespace
@@ -162,7 +158,7 @@ namespace InSpaceNoOneSeesYourShadow.Engine.ContentManagement
                 if (line.StartsWith("Ns"))
                 {
                     // Attempt to parse each part of the color
-                    var success = float.TryParse(line.Substring(3), style, culture, out var exponent);
+                    var success = float.TryParse(line[3..], style, culture, out var exponent);
 
                     output.SpecularExponent = exponent;
 
@@ -179,7 +175,7 @@ namespace InSpaceNoOneSeesYourShadow.Engine.ContentManagement
                     // Check that file name is present
                     if (line.Length > "map_Ka".Length + 6)
                     {
-                        output.AmbientMap = line.Substring("map_Ka".Length + 1);
+                        output.AmbientMap = line[("map_Ka".Length + 1)..];
                     }
                 }
 
@@ -189,7 +185,7 @@ namespace InSpaceNoOneSeesYourShadow.Engine.ContentManagement
                     // Check that file name is present
                     if (line.Length > "map_Kd".Length + 6)
                     {
-                        output.DiffuseMap = line.Substring("map_Kd".Length + 1);
+                        output.DiffuseMap = line[("map_Kd".Length + 1)..];
                     }
                 }
 
@@ -199,7 +195,7 @@ namespace InSpaceNoOneSeesYourShadow.Engine.ContentManagement
                     // Check that file name is present
                     if (line.Length > "map_Ks".Length + 6)
                     {
-                        output.SpecularMap = line.Substring("map_Ks".Length + 1);
+                        output.SpecularMap = line[("map_Ks".Length + 1)..];
                     }
                 }
 
@@ -209,7 +205,7 @@ namespace InSpaceNoOneSeesYourShadow.Engine.ContentManagement
                     // Check that file name is present
                     if (line.Length > "map_normal".Length + 6)
                     {
-                        output.NormalMap = line.Substring("map_normal".Length + 1);
+                        output.NormalMap = line[("map_normal".Length + 1)..];
                     }
                 }
 
@@ -219,7 +215,7 @@ namespace InSpaceNoOneSeesYourShadow.Engine.ContentManagement
                     // Check that file name is present
                     if (line.Length > "map_opacity".Length + 6)
                     {
-                        output.OpacityMap = line.Substring("map_opacity".Length + 1);
+                        output.OpacityMap = line[("map_opacity".Length + 1)..];
                     }
                 }
 

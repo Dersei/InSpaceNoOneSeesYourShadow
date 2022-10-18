@@ -4,8 +4,8 @@ using InSpaceNoOneSeesYourShadow.Engine.Abstractions;
 using InSpaceNoOneSeesYourShadow.Engine.ContentManagement;
 using InSpaceNoOneSeesYourShadow.Engine.Core;
 using InSpaceNoOneSeesYourShadow.Engine.Objects3D;
-using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 
 namespace InSpaceNoOneSeesYourShadow.Logic
 {
@@ -21,10 +21,10 @@ namespace InSpaceNoOneSeesYourShadow.Logic
             cubePlane.Transform.Rotation = new Vector3(MathHelper.PiOver2, 0, 0f);
             cubePlane.Model.Material = new Material(new Vector3(0.5f), new Vector3(1), new Vector3(0.2f));
             //cubePlane.Transform.PositionModifier = f => new Vector3(2 * (float)Math.Sin(MathHelper.DegreesToRadians(f * 80 % 360)), 0f, 2 * (float)Math.Cos(MathHelper.DegreesToRadians(f * 80 % 360)));
-            cubePlane.Transform.ScaleModifier = f => new Vector3(50f, 0.1f, 50f);
-            cubePlane.Model.PbrValues = new Model.PBRValues
+            cubePlane.Transform.ScaleModifier = _ => new Vector3(50f, 0.1f, 50f);
+            cubePlane.Model.Pbr = new Model.PbrValues
             {
-                AO = 0.5f,
+                Ao = 0.5f,
                 Metallic = 0.5f,
                 ReflectionStrength = 0.5f,
                 Refraction = 4f,
@@ -39,9 +39,9 @@ namespace InSpaceNoOneSeesYourShadow.Logic
                 "_Resources/Models/ship2.obj");
             playerShip.Model.Material = new Material(new Vector3(1), new Vector3(1), new Vector3(0.8f));
             playerShip.Model.Texture = Texture2DLoader.LoadFromFile("_Resources/Textures/ship2_diffuse.bmp");
-            playerShip.Model.PbrValues = new Model.PBRValues
+            playerShip.Model.Pbr = new Model.PbrValues
             {
-                AO = 1f,
+                Ao = 1f,
                 Metallic = 0.5f,
                 ReflectionStrength = 0f,
                 Refraction = 0f,
@@ -59,14 +59,14 @@ namespace InSpaceNoOneSeesYourShadow.Logic
                     GameObject ship = new GameObject(new Vector3(40f - 15 * i, 20f - 10 * j, 0f), new Vector3(MathHelper.Pi, 0, -MathHelper.PiOver2), Vector3.One, ModelLoader.LoadFromFile("_Resources/Models/ship_dread_t.obj"));
                     ship.Model.Texture = Texture2DLoader.LoadFromFile("_Resources/Textures/dread_ship_t.png");
                     //ship.Transform.Position += new Vector3(40f - 15 * i, 20f - 10 * j, 0f);
-                    ship.Transform.PositionModifier = f => ship.Transform.Position + new Vector3((float)Math.Sin(GameManager.Time) / 100f, -GameManager.Time / 1000f, 0);
+                    ship.Transform.PositionModifier = _ => ship.Transform.Position + new Vector3((float)Math.Sin(GameManager.Time) / 100f, -GameManager.Time / 1000f, 0);
                     ship.Transform.Rotation = new Vector3(MathHelper.Pi, 0, -MathHelper.PiOver2);
                     ship.Model.Material = new Material(new Vector3(0.5f), new Vector3(1), new Vector3(0.8f));
                     //cubePlane.PositionModifier = f => new Vector3(2 * (float)Math.Sin(MathHelper.DegreesToRadians(f * 80 % 360)), 0f, 2 * (float)Math.Cos(MathHelper.DegreesToRadians(f * 80 % 360)));
-                    ship.Transform.ScaleModifier = f => new Vector3(0.005f, 0.005f, 0.005f);
-                    ship.Model.PbrValues = new Model.PBRValues
+                    ship.Transform.ScaleModifier = _ => new Vector3(0.005f, 0.005f, 0.005f);
+                    ship.Model.Pbr = new Model.PbrValues
                     {
-                        AO = 0.5f,
+                        Ao = 0.5f,
                         Metallic = 0.5f,
                         ReflectionStrength = (float)Basic.Random.NextDouble(),
                         Refraction = 0f,

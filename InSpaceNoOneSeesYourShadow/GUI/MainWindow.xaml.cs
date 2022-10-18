@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Windows.Forms;
-using System.Windows.Media;
 using OpenTK.Graphics.OpenGL;
-using OpenTK.Input;
 using Color = System.Drawing.Color;
 using System.Windows;
+using System.Windows.Input;
 using InSpaceNoOneSeesYourShadow.Logic;
+using OpenTK.Wpf;
 
 namespace InSpaceNoOneSeesYourShadow.GUI
 {
@@ -13,7 +12,7 @@ namespace InSpaceNoOneSeesYourShadow.GUI
     {
         private bool _canDraw;
 
-        private readonly Game _game = new Game();
+        private readonly Game _game = new();
 
         public MainWindow()
         {
@@ -21,6 +20,12 @@ namespace InSpaceNoOneSeesYourShadow.GUI
             Left = 0;
             Top = 0;
             InitializeComponent();
+            var settings = new GLWpfControlSettings
+            {
+                MajorVersion = 4,
+                MinorVersion = 6
+            };
+            OpenTkControl.Start(settings);
         }
 
 
@@ -43,10 +48,9 @@ namespace InSpaceNoOneSeesYourShadow.GUI
                     _counter = 0;
                     break;
             }
-            GLCanvas.Refresh();
         }
 
-        private void GLControl_Paint(object sender, PaintEventArgs e)
+        private void GLControl_Paint(TimeSpan delta)
         {
             if (!_canDraw) return;
             GL.PolygonMode(MaterialFace.FrontAndBack, _polygonMode);
@@ -57,12 +61,11 @@ namespace InSpaceNoOneSeesYourShadow.GUI
 
         protected void OnRenderFrame()
         {
-            GL.Viewport(0, 0, GLCanvas.Width, GLCanvas.Height);
+            GL.Viewport(0, 0, (int) OpenTkControl.Width, (int) OpenTkControl.Height);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.CullFace);
             _game.Draw();
-            GLCanvas.SwapBuffers();
         }
 
         protected void OnUpdateFrame()
@@ -77,23 +80,10 @@ namespace InSpaceNoOneSeesYourShadow.GUI
             GL.ClearColor(Color.White);
             _canDraw = true;
         }
-
-
-        private void WindowsFormsHost_Initialized(object sender, EventArgs e)
+        
+        private void GLCanvas_OnPreviewKeyDown(object sender, KeyEventArgs e)
         {
-            _ = Mouse.GetState(); //Necessary to prevent crashes later
-            GLCanvas.MakeCurrent();
-            CompositionTarget.Rendering += CompositionTarget_Rendering;
-        }
-
-        private void CompositionTarget_Rendering(object sender, EventArgs e)
-        {
-            GLCanvas.Refresh();
-        }
-
-        private void GLCanvas_OnPreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
-            if (e.KeyCode == Keys.P)
+            if (e.Key == Key.P)
             {
                 ChangePolygonMode();
             }

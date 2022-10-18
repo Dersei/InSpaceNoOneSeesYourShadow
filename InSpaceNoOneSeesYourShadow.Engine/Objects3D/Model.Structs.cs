@@ -1,5 +1,5 @@
 ﻿using System.Runtime.InteropServices;
-using OpenTK;
+using OpenTK.Mathematics;
 
 namespace InSpaceNoOneSeesYourShadow.Engine.Objects3D
 {
@@ -22,9 +22,9 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Objects3D
             }
         }
 
-        public struct PBRValues
+        public struct PbrValues
         {
-            public float AO { get; set; }
+            public float Ao { get; set; }
             public float Metallic { get; set; }
             public float Roughness { get; set; }
             public float ReflectionStrength { get; set; }

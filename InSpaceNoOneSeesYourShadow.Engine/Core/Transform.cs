@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using OpenTK;
+using OpenTK.Mathematics;
 
 namespace InSpaceNoOneSeesYourShadow.Engine.Core
 {
@@ -27,9 +27,9 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Core
             return matrix;
         }
 
-        public Transform Parent;
+        public Transform? Parent;
 
-        public List<Transform> Children = new List<Transform>();
+        public List<Transform> Children = new();
         public Func<float, Vector3> PositionModifier { get; set; }
         public Func<float, Vector3> RotationModifier { get; set; }
         public Func<float, Vector3> ScaleModifier { get; set; }

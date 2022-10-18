@@ -5,9 +5,9 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Abstractions
 {
     public abstract class Scene
     {
-        protected List<GameObject> GameObjectsToAdd = new List<GameObject>();
-        protected List<GameObject> GameObjectsToRemove = new List<GameObject>();
-        protected List<GameObject> _gameObjects = new List<GameObject>();
+        protected readonly List<GameObject> GameObjectsToAdd = new();
+        protected readonly List<GameObject> GameObjectsToRemove = new();
+        protected readonly List<GameObject> _gameObjects = new();
         public IReadOnlyList<GameObject> GameObjects => _gameObjects;
         public abstract void CreateScene();
 

@@ -17,7 +17,8 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Utils
         /// <summary>
         /// Write a message to a log file
         /// </summary>
-        /// <param name="message">a message that will append to a log file</param>
+        /// <param name="message">A message that will append to a log file</param>
+        /// <param name="memberName">Automatically sent member name</param>
         [Conditional("DEBUG")]
         public static void LogFile(string message, [CallerMemberName] string memberName = "")
         {

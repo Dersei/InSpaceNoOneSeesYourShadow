@@ -4,6 +4,6 @@ namespace InSpaceNoOneSeesYourShadow.Engine
 {
     public class Basic
     {
-        public static readonly Random Random = new Random(2480);
+        public static readonly Random Random = new(2480);
     }
 }

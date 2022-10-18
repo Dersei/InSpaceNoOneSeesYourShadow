@@ -1,5 +1,5 @@
 ﻿using System;
-using OpenTK;
+using OpenTK.Mathematics;
 
 namespace InSpaceNoOneSeesYourShadow.Engine.Extensions
 {
@@ -54,8 +54,8 @@ namespace InSpaceNoOneSeesYourShadow.Engine.Extensions
             }
             else
             {
-                up = Vector3.Transform(up, Matrix3.CreateRotationY(-result.Y));
-                up = Vector3.Transform(up, Matrix3.CreateRotationX(-result.X));
+                up = Vector3.Transform(up, Matrix3.CreateRotationY(-result.Y).ExtractRotation());
+                up = Vector3.Transform(up, Matrix3.CreateRotationX(-result.X).ExtractRotation());
                 result.Z = ArcTanAngle(up.Y, -up.X);
             }
         }

@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Input;
 using InSpaceNoOneSeesYourShadow.Engine;
 using InSpaceNoOneSeesYourShadow.Engine.ContentManagement;
 using InSpaceNoOneSeesYourShadow.Engine.Core;
 using InSpaceNoOneSeesYourShadow.Engine.Objects3D;
-using OpenTK;
-using OpenTK.Input;
+using OpenTK.Mathematics;
 
 namespace InSpaceNoOneSeesYourShadow.Logic
 {
     internal class ShooterComponent : Component
     {
-        private readonly List<GameObject> _projectiles = new List<GameObject>();
-        private List<GameObject> _enemies = new List<GameObject>();
+        private readonly List<GameObject> _projectiles = new();
+        private List<GameObject> _enemies = new();
         private int _score;
 
         private static bool CheckCollision(Vector2 first, Vector2 second)
@@ -59,13 +59,13 @@ namespace InSpaceNoOneSeesYourShadow.Logic
         public override void Update(float time)
         {
             CheckCollisionsWithEnemy();
-            if (Keyboard.GetState().IsKeyDown(Key.Space) && !_wasSpacePressed)
+            if (Keyboard.IsKeyDown(Key.Space) && !_wasSpacePressed)
             {
                 ShootPlayerProjectile();
                 _wasSpacePressed = true;
                 return;
             }
-            _wasSpacePressed = !Keyboard.GetState().IsKeyUp(Key.Space);
+            _wasSpacePressed = !Keyboard.IsKeyUp(Key.Space);
         }
 
         public override void Start()
